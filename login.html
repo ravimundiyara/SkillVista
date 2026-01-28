@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access SkillVista</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Specific styles for login/register page */
+        .auth-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 150px); /* Adjust based on header/footer height */
+            padding: var(--section-padding);
+        }
+
+        .auth-card {
+            background: var(--card-background);
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .form-toggle-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .toggle-btn {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+            transition: color 0.3s ease, border-bottom 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            color: var(--primary-color);
+            border-bottom: 3px solid var(--primary-color);
+        }
+
+        .auth-form {
+            display: none; /* Hidden by default */
+        }
+
+        .auth-form.active {
+            display: block; /* Shown when active */
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        .auth-card .btn-primary {
+            width: 100%;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">SkillVista</a>
+            <div class="nav-links">
+                <!-- Links kept minimal as this is an auth page -->
+                <a href="index.html" class="btn btn-secondary">Back to Home</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="form-toggle-header">
+                <button id="login-toggle" class="toggle-btn active">Login</button>
+                <button id="register-toggle" class="toggle-btn">Register</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label for="login-email">Email Address</label>
+                    <input type="email" id="login-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" name="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+
+            <!-- Register Form -->
+            <form id="register-form" class="auth-form">
+                <div class="form-group">
+                    <label for="reg-username">Username</label>
+                    <input type="text" id="reg-username" name="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">Email Address</label>
+                    <input type="email" id="reg-email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-password">Password</label>
+                    <input type="password" id="reg-password" name="password" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-confirm-password">Confirm Password</label>
+                    <input type="password" id="reg-confirm-password" name="confirm_password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Register Account</button>
+            </form>
+        </div>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 SkillVista. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+    <script>
+        // Minimal JS for toggling forms (as requested, CSS-based toggle is better for structure, but JS is needed for form visibility unless using only CSS tricks which complicate linking)
+        // Given the constraint "minimal JavaScript", this simple toggle will be included.
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const loginToggle = document.getElementById('login-toggle');
+            const registerToggle = document.getElementById('register-toggle');
+            const loginForm = document.getElementById('login-form');
+            const registerForm = document.getElementById('register-form');
+
+            function setFormActive(activeForm, inactiveForm, activeToggle, inactiveToggle) {
+                activeForm.classList.add('active');
+                inactiveForm.classList.remove('active');
+                activeToggle.classList.add('active');
+                inactiveToggle.classList.remove('active');
+            }
+
+            loginToggle.addEventListener('click', () => {
+                setFormActive(loginForm, registerForm, loginToggle, registerToggle);
+            });
+
+            registerToggle.addEventListener('click', () => {
+                setFormActive(registerForm, loginForm, registerToggle, loginToggle);
+            });
+
+            console.log('Authentication page JS loaded.');
+        });
+    </script>
+</body>
+</html>

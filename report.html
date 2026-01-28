@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Gap Report - SkillVista</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        /* Report Specific Styles */
+        body {
+            background-color: var(--background-color);
+        }
+
+        .report-container {
+            width: 90%;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background: var(--card-background);
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .report-header h1 {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        .target-summary {
+            background-color: #e7f3ff;
+            border-left: 5px solid var(--primary-color);
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 5px;
+        }
+
+        .target-summary h2 {
+            font-size: 1.5rem;
+            color: var(--text-color);
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        /* Progress Bar Styling */
+        .readiness-progress {
+            margin-bottom: 30px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .progress-bar-outer {
+            height: 25px;
+            background-color: var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            width: 78%; /* Placeholder value based on dashboard card */
+            background-color: var(--success-color);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 10px;
+            color: white;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* Missing Skills List */
+        .missing-skills-list h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 20px;
+        }
+
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border-color);
+            background-color: white;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .skill-name {
+            font-weight: 500;
+            flex-grow: 1;
+        }
+
+        .priority-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .priority-High {
+            background-color: #dc3545; /* Red */
+        }
+        .priority-Medium {
+            background-color: #ffc107; /* Yellow/Orange */
+            color: var(--text-color);
+        }
+        .priority-Low {
+            background-color: var(--success-color); /* Green */
+        }
+    </style>
+</head>
+<body>
+    <header class="main-header">
+        <nav class="navbar">
+            <a href="index.html" class="logo">SkillVista</a>
+            <div class="nav-links">
+                <a href="dashboard.html" class="btn btn-secondary">Dashboard</a>
+                <a href="login.html" class="btn btn-primary">Logout</a>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="report-container">
+            <div class="report-header">
+                <h1>Your Personalized Skill Gap Report</h1>
+            </div>
+
+            <!-- Target Role Summary -->
+            <div class="target-summary">
+                <h2>Target Role: Senior Frontend Developer (2025 Roadmap)</h2>
+                <p>Focus areas identified: Advanced JavaScript (React/Vue), Performance Optimization, CI/CD integration.</p>
+            </div>
+
+            <!-- Readiness Progress -->
+            <div class="readiness-progress">
+                <div class="progress-label">
+                    <span>Current Readiness: 78%</span>
+                    <span>Target Readiness: 90%</span>
+                </div>
+                <div class="progress-bar-outer">
+                    <div class="progress-bar-inner" style="width: 78%;">78%</div>
+                </div>
+            </div>
+
+            <!-- Missing Skills List -->
+            <div class="missing-skills-list">
+                <h2>Skills Requiring Attention</h2>
+                <div class="skill-item">
+                    <span class="skill-name">Asynchronous Programming in ES6+</span>
+                    <span class="priority-badge priority-High">High</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">Web Performance Auditing (Lighthouse)</span>
+                    <span class="priority-badge priority-High">High</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">Containerization Basics (Docker)</span>
+                    <span class="priority-badge priority-Medium">Medium</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">State Management Patterns</span>
+                    <span class="priority-badge priority-Medium">Medium</span>
+                </div>
+                <div class="skill-item">
+                    <span class="skill-name">Advanced CSS Grid Layouts</span>
+                    <span class="priority-badge priority-Low">Low</span>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                 <a href="#" class="btn btn-primary btn-large">View Recommended Learning Path</a>
+            </div>
+        </div>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 SkillVista. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/script.js"></script>
+</body>
+</html>
