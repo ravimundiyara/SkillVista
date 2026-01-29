@@ -114,6 +114,7 @@
                     <li><a href="dashboard.html" class="active">Dashboard</a></li>
                     <li><a href="learning.html">Learning Paths</a></li>
                     <li><a href="learning.html">Assessments</a></li>
+                    <li><a href="#" id="resume-manager-link">Resume Manager</a></li>
                     <li><a href="#">Profile Settings</a></li>
                     <li><a href="index.html">Logout</a></li>
                 </ul>
@@ -121,7 +122,7 @@
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content" aria-label="Student dashboard overview">
+        <main class="main-content" aria-label="Student dashboard overview">gv
             <header class="dashboard-header">
                 <h1>Welcome Back, Student!</h1>
             </header>
@@ -148,6 +149,37 @@
                     <p class="card-subtext">Need 500 for Certification</p>
                 </article>
             </div>
+
+            <!-- Resume Upload Status Indicator -->
+            <section class="resume-status-section" aria-label="Resume upload status">
+                <div class="resume-status-card">
+                    <div class="resume-status-header">
+                        <h3>Resume Status</h3>
+                        <span class="resume-status-badge" id="resume-status-badge">Not uploaded</span>
+                    </div>
+                    <div class="resume-status-content" id="resume-status-content">
+                        <p class="resume-status-message">No resume uploaded yet.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Resume Analysis Status Placeholder (UI only, no NLP/backend yet) -->
+            <section class="resume-status-section" aria-label="Resume analysis status">
+                <div class="resume-status-card">
+                    <div class="resume-status-header">
+                        <h3>Resume Analysis Status</h3>
+                        <span class="resume-status-badge not-uploaded" id="resume-analysis-badge">
+                            Not analyzed
+                        </span>
+                    </div>
+                    <div class="resume-status-content" id="resume-analysis-content">
+                        <p class="resume-status-message">
+                            Once your resume is processed, key skills will be extracted here to personalize your learning path.
+                        </p>
+                        <!-- TODO: Hook this section to real analysis status from backend in future. -->
+                    </div>
+                </div>
+            </section>
 
             <!-- First-time user: Upload Resume call-to-action -->
             <section id="resume-upload-section"
@@ -200,6 +232,58 @@
             </section>
         </main>
     </div>
+
+    <!-- Resume Upload Modal (First-time User Flow) -->
+    <section
+        id="resume-modal"
+        class="resume-modal is-hidden"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="resume-modal-title"
+    >
+        <div class="resume-modal-backdrop"></div>
+        <div class="resume-modal-dialog" role="document">
+            <button
+                type="button"
+                class="resume-modal-close"
+                id="resume-modal-close"
+                aria-label="Close resume upload dialog"
+            >
+                &times;
+            </button>
+
+            <header class="resume-upload-header">
+                <h2 id="resume-modal-title">Upload Your Resume</h2>
+                <p>
+                    Uploading your resume helps SkillVista personalize your journey,
+                    recommend the right skills, and match you to real-world roles faster.
+                </p>
+            </header>
+
+            <!-- Front-end only: no backend/API calls yet -->
+            <form id="resume-modal-form" class="resume-upload-form">
+                <div class="resume-upload-field">
+                    <label for="resume-modal-file">Resume file (PDF, DOC, DOCX)</label>
+                    <input
+                        type="file"
+                        id="resume-modal-file"
+                        name="resume"
+                        accept=".pdf,.doc,.docx"
+                        required
+                    />
+                </div>
+
+                <div class="resume-upload-actions">
+                    <button type="submit" class="btn btn-primary">
+                        Upload Resume
+                    </button>
+                    <button type="button" class="btn btn-secondary" id="resume-modal-skip">
+                        Skip for now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
 
     <footer class="main-footer">
         <div class="container">

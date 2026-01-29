@@ -46,21 +46,142 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ===== First-time User Resume Upload (dashboard.html) =====
-    const resumeSection = document.getElementById('resume-upload-section');
-    const resumeForm = document.getElementById('resume-upload-form');
-    const resumeFileInput = document.getElementById('resume-file');
-    const resumeSkipBtn = document.getElementById('resume-skip-btn');
+    // ===== First-time User Resume Upload Modal (dashboard.html) =====
+    const resumeModal = document.getElementById('resume-modal');
+    const resumeModalClose = document.getElementById('resume-modal-close');
+    const resumeModalSkip = document.getElementById('resume-modal-skip');
+    const resumeModalForm = document.getElementById('resume-modal-form');
+    const resumeManagerLink = document.getElementById('resume-manager-link');
 
-    if (resumeSection && resumeForm && resumeFileInput && resumeSkipBtn) {
-        // TODO: Replace this with real first-time user flag from backend/session.
-        const isFirstTimeUser = true; // Placeholder for backend-provided value
+    // Modal open/close functions (accessible for sidebar link)
+    const openResumeModal = () => {
+        if (resumeModal) {
+            resumeModal.classList.remove('is-hidden');
+            resumeModal.setAttribute('aria-hidden', 'false');
+        }
+    };
 
-        if (!isFirstTimeUser) {
-            resumeSection.classList.add('is-hidden');
+    const closeResumeModal = () => {
+        if (resumeModal) {
+            resumeModal.classList.add('is-hidden');
+            resumeModal.setAttribute('aria-hidden', 'true');
+        }
+    };
+
+    if (resumeModal && resumeModalClose && resumeModalSkip && resumeModalForm) {
+        // Check if user has already uploaded or skipped (frontend check via localStorage)
+        // TODO: Replace with real first-time user flag from backend/session.
+        const savedStatus = localStorage.getItem('skillvista_resume_status');
+        const isFirstTimeUser = !savedStatus || savedStatus === 'not-uploaded';
+
+        if (isFirstTimeUser) {
+            openResumeModal();
         }
 
-        resumeForm.addEventListener('submit', (event) => {
+        // Close on "X"
+        resumeModalClose.addEventListener('click', () => {
+            closeResumeModal();
+        });
+
+        // Skip button handler is moved below after status management setup
+
+        // Close when clicking outside the dialog (backdrop)
+        resumeModal.addEventListener('click', (event) => {
+            if (event.target === resumeModal) {
+                closeResumeModal();
+            }
+        });
+
+        // Optional: close with Escape key
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                closeResumeModal();
+            }
+        });
+    }
+
+    // Sidebar "Resume Manager" link opens the modal
+    if (resumeManagerLink) {
+        resumeManagerLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            openResumeModal();
+        });
+    }
+
+    // ===== Resume Status Management (dashboard.html) =====
+    const resumeStatusBadge = document.getElementById('resume-status-badge');
+    const resumeStatusContent = document.getElementById('resume-status-content');
+    const resumeFileInput = document.getElementById('resume-modal-file');
+
+    // Resume status state management (frontend only, using localStorage)
+    const RESUME_STORAGE_KEY = 'skillvista_resume_status';
+    const RESUME_FILE_KEY = 'skillvista_resume_filename';
+
+    const getResumeStatus = () => {
+        return localStorage.getItem(RESUME_STORAGE_KEY) || 'not-uploaded';
+    };
+
+    const setResumeStatus = (status, filename = null) => {
+        localStorage.setItem(RESUME_STORAGE_KEY, status);
+        if (filename) {
+            localStorage.setItem(RESUME_FILE_KEY, filename);
+        }
+        updateResumeStatusDisplay();
+    };
+
+    const getResumeFilename = () => {
+        return localStorage.getItem(RESUME_FILE_KEY) || null;
+    };
+
+    const updateResumeStatusDisplay = () => {
+        if (!resumeStatusBadge || !resumeStatusContent) return;
+
+        const status = getResumeStatus();
+        const filename = getResumeFilename();
+
+        // Update badge
+        resumeStatusBadge.className = 'resume-status-badge';
+        resumeStatusBadge.textContent = status === 'uploaded' ? 'Uploaded' : 
+                                         status === 'skipped' ? 'Skipped' : 'Not uploaded';
+        resumeStatusBadge.classList.add(status === 'uploaded' ? 'uploaded' : 
+                                         status === 'skipped' ? 'skipped' : 'not-uploaded');
+
+        // Update content based on status
+        if (status === 'uploaded' && filename) {
+            resumeStatusContent.innerHTML = `
+                <p class="resume-status-message">Your resume is on file.</p>
+                <p class="resume-status-filename">File: ${filename}</p>
+                <div class="resume-status-actions">
+                    <button type="button" class="btn btn-primary" id="replace-resume-btn">Replace Resume</button>
+                </div>
+            `;
+        } else if (status === 'skipped') {
+            resumeStatusContent.innerHTML = `
+                <p class="resume-status-message">You can upload your resume later from Resume Manager or Profile Settings.</p>
+            `;
+        } else {
+            resumeStatusContent.innerHTML = `
+                <p class="resume-status-message">No resume uploaded yet.</p>
+            `;
+        }
+    };
+
+    // Update status display on page load
+    updateResumeStatusDisplay();
+
+    // Event delegation for dynamically created "Replace Resume" button
+    if (resumeStatusContent) {
+        resumeStatusContent.addEventListener('click', (event) => {
+            if (event.target && event.target.id === 'replace-resume-btn') {
+                event.preventDefault();
+                openResumeModal();
+            }
+        });
+    }
+
+    // Handle resume form submission
+    if (resumeModalForm && resumeFileInput) {
+        resumeModalForm.addEventListener('submit', (event) => {
             event.preventDefault();
 
             const file = resumeFileInput.files[0];
@@ -69,7 +190,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Front-end validation only: ensure allowed types
+            // Front-end validation: ensure allowed types
             const allowedTypes = [
                 'application/pdf',
                 'application/msword',
@@ -81,6 +202,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            // Save status and filename (frontend only - no backend API yet)
+            setResumeStatus('uploaded', file.name);
+            
             // TODO: Connect to backend API to upload the file.
             // Example:
             // const formData = new FormData();
@@ -90,15 +214,25 @@ document.addEventListener('DOMContentLoaded', () => {
             //   body: formData,
             //   credentials: 'include',
             // })
-            //   .then(/* handle response, update UI, mark user as not first-time */)
-            //   .catch(/* show error to user */);
+            //   .then(response => response.json())
+            //   .then(data => {
+            //     setResumeStatus('uploaded', file.name);
+            //     closeResumeModal();
+            //   })
+            //   .catch(error => {
+            //     alert('Upload failed. Please try again.');
+            //   });
 
-            alert('This is a demo: resume upload will be wired to the backend later.');
+            closeResumeModal();
         });
+    }
 
-        resumeSkipBtn.addEventListener('click', () => {
+    // Handle skip button
+    if (resumeModalSkip) {
+        resumeModalSkip.addEventListener('click', () => {
+            setResumeStatus('skipped');
             // TODO: Persist "skipped" state in backend or local storage.
-            resumeSection.classList.add('is-hidden');
+            closeResumeModal();
         });
     }
 });
