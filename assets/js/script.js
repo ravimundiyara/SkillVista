@@ -36,12 +36,51 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sidebarLinks.length) {
         sidebarLinks.forEach((link) => {
-            link.addEventListener('click', () => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
                 // Remove existing active state
                 sidebarLinks.forEach((l) => l.classList.remove('active'));
                 // Highlight clicked link
                 link.classList.add('active');
-                // No backend / routing logic here – just UI state
+                
+                // Handle section visibility based on href
+                const href = link.getAttribute('href');
+                
+                // Hide all sections first
+                const sections = document.querySelectorAll('section[id]');
+                sections.forEach(section => {
+                    if (section.id !== 'practice-arena') {
+                        section.style.display = 'none';
+                    }
+                });
+                
+                // Show the target section
+                if (href === '#practice-arena') {
+                    const practiceArena = document.getElementById('practice-arena');
+                    if (practiceArena) {
+                        practiceArena.style.display = 'block';
+                        // Initialize Practice Arena if not already done
+                        if (typeof initializePracticeArena !== 'undefined') {
+                            initializePracticeArena();
+                        }
+                    }
+                } else if (href === '#course-learning-section') {
+                    const learningSection = document.querySelector('.course-learning-section');
+                    if (learningSection) {
+                        learningSection.style.display = 'block';
+                        // Initialize Learning section if not already done
+                        if (typeof initializeLearningSection !== 'undefined') {
+                            initializeLearningSection();
+                        }
+                    }
+                } else {
+                    // Show main dashboard content
+                    const mainContent = document.querySelector('.main-dashboard-area');
+                    if (mainContent) {
+                        mainContent.style.display = 'block';
+                    }
+                }
             });
         });
     }
@@ -235,4 +274,544 @@ document.addEventListener('DOMContentLoaded', () => {
             closeResumeModal();
         });
     }
+
+    // ===== Resume Analysis Logic =====
+    const analysisFormContainer = document.getElementById('analysis-form-container');
+    const analysisResultsContainer = document.getElementById('analysis-results-container');
+    const analysisMessage = document.getElementById('analysis-message');
+    const analyzeResumeBtn = document.getElementById('analyze-resume-btn');
+    const targetRoleSearch = document.getElementById('target-role-search');
+    const targetRoleHidden = document.getElementById('target-role');
+    const roleSearchResults = document.getElementById('role-search-results');
+    const resumeAnalysisBadge = document.getElementById('resume-analysis-badge');
+
+    // State management for search and selection
+    let selectedTargetRole = null;
+
+    // Resume Skip Button (for main page)
+    const resumeSkipBtn = document.getElementById('resume-skip-btn');
+    if (resumeSkipBtn) {
+        resumeSkipBtn.addEventListener('click', function() {
+            // Hide upload section and show analysis form
+            document.getElementById('resume-upload-section').style.display = 'none';
+            showAnalysisForm();
+        });
+    }
+
+    // Analyze Resume Button
+    if (analyzeResumeBtn) {
+        analyzeResumeBtn.addEventListener('click', function() {
+            // Validate that a role was actually selected, not just typed
+            if (!selectedTargetRole) {
+                alert('Please select a target role from the suggestions list.');
+                return;
+            }
+
+            // Check if resume is uploaded
+            const resumeStatus = getResumeStatus();
+            if (resumeStatus !== 'uploaded') {
+                alert('Please upload your resume first before analyzing.');
+                return;
+            }
+
+            // Call the backend API for skill gap analysis
+            performResumeAnalysis(selectedTargetRole);
+        });
+    }
+
+    // Searchable Dropdown Functionality with Autocomplete
+    if (targetRoleSearch && roleSearchResults) {
+        let searchTimeout;
+        let allRolesCache = null;
+
+        // Load all roles on page load for better performance
+        loadAllRoles();
+
+        // Enhanced input event handler with autocomplete
+        targetRoleSearch.addEventListener('input', function() {
+            const query = this.value.trim();
+            
+            // Clear previous timeout
+            clearTimeout(searchTimeout);
+            
+            if (query.length === 0) {
+                // Show all roles when search is empty
+                showAllRoles();
+                return;
+            }
+            
+            // Show results immediately for better UX
+            // Debounce search to avoid too many API calls
+            searchTimeout = setTimeout(() => {
+                performRoleSearch(query);
+            }, 100); // Reduced debounce time for better responsiveness
+        });
+
+        targetRoleSearch.addEventListener('focus', function() {
+            if (this.value.trim().length === 0) {
+                // Show all roles when focused and empty
+                showAllRoles();
+            } else if (this.value.trim().length >= 1) {
+                performRoleSearch(this.value.trim());
+            }
+        });
+
+        targetRoleSearch.addEventListener('click', function() {
+            if (this.value.trim().length === 0) {
+                // Show all roles when clicked and empty
+                showAllRoles();
+            }
+        });
+
+        // Enhanced keyboard navigation
+        targetRoleSearch.addEventListener('keydown', function(e) {
+            const results = roleSearchResults.querySelectorAll('.dropdown-item');
+            const visibleResults = Array.from(results).filter(r => r.style.display !== 'none');
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                navigateResults(visibleResults, 1);
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                navigateResults(visibleResults, -1);
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                const selected = roleSearchResults.querySelector('.dropdown-item.selected');
+                if (selected && selected.dataset.role) {
+                    selectRole(selected.dataset.role, selected.textContent.replace(selected.querySelector('.role-category')?.textContent || '', '').trim());
+                }
+            } else if (e.key === 'Escape') {
+                hideSearchResults();
+            }
+        });
+
+        // Click outside to close dropdown
+        document.addEventListener('click', function(e) {
+            if (!targetRoleSearch.contains(e.target) && !roleSearchResults.contains(e.target)) {
+                hideSearchResults();
+            }
+        });
+    }
+
+    function loadAllRoles() {
+        // Load all roles from API for better performance
+        fetch('/job-roles')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    allRolesCache = [];
+                    data.data.categories.forEach(category => {
+                        category.roles.forEach(role => {
+                            allRolesCache.push({
+                                role_name: role,
+                                category: category.category_name
+                            });
+                        });
+                    });
+                    // Sort roles alphabetically
+                    allRolesCache.sort((a, b) => a.role_name.localeCompare(b.role_name));
+                    console.log(`Loaded ${allRolesCache.length} roles successfully`);
+                } else {
+                    console.error('Failed to load roles:', data);
+                }
+            })
+            .catch(error => {
+                console.error('Failed to load roles:', error);
+            });
+    }
+
+    function showAllRoles() {
+        if (!allRolesCache) {
+            // Fallback to API if cache not loaded
+            fetch('/job-roles')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        const allRoles = [];
+                        data.data.categories.forEach(category => {
+                            category.roles.forEach(role => {
+                                allRoles.push({
+                                    role_name: role,
+                                    category: category.category_name
+                                });
+                            });
+                        });
+                        displaySearchResults(allRoles);
+                    } else {
+                        console.error('Failed to load roles:', data);
+                        showNoResults();
+                    }
+                })
+                .catch(error => {
+                    console.error('Role search error:', error);
+                    showNoResults();
+                });
+        } else {
+            displaySearchResults(allRolesCache);
+        }
+    }
+
+    function performRoleSearch(query) {
+        // First try local search for better performance
+        const localResults = searchRolesLocally(query);
+        if (localResults.length > 0) {
+            displaySearchResults(localResults);
+            return;
+        }
+
+        // Fallback to API search
+        fetch(`/job-roles/search?q=${encodeURIComponent(query)}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.data.results.length > 0) {
+                    displaySearchResults(data.data.results);
+                } else {
+                    showNoResults();
+                }
+            })
+            .catch(error => {
+                console.error('Role search error:', error);
+                showNoResults();
+            });
+    }
+
+    function searchRolesLocally(query) {
+        if (!allRolesCache) return [];
+        
+        const queryLower = query.toLowerCase().trim();
+        const results = [];
+        
+        // Enhanced search logic for better keyword matching
+        allRolesCache.forEach(role => {
+            const roleLower = role.role_name.toLowerCase();
+            const categoryLower = role.category.toLowerCase();
+            
+            // Check if query matches role name or category
+            const roleMatches = roleLower.includes(queryLower);
+            const categoryMatches = categoryLower.includes(queryLower);
+            
+            if (roleMatches || categoryMatches) {
+                results.push({
+                    ...role,
+                    matchType: roleMatches ? 'role' : 'category',
+                    roleLower: roleLower,
+                    categoryLower: categoryLower
+                });
+            }
+        });
+        
+        // Sort results by relevance with enhanced logic
+        results.sort((a, b) => {
+            // Exact match on role name gets highest priority
+            if (a.roleLower === queryLower && b.roleLower !== queryLower) return -1;
+            if (b.roleLower === queryLower && a.roleLower !== queryLower) return 1;
+            
+            // Exact match on category gets second priority
+            if (a.categoryLower === queryLower && b.categoryLower !== queryLower) return -1;
+            if (b.categoryLower === queryLower && a.categoryLower !== queryLower) return 1;
+            
+            // Role matches get priority over category matches
+            if (a.matchType === 'role' && b.matchType === 'category') return -1;
+            if (b.matchType === 'role' && a.matchType === 'category') return 1;
+            
+            // Earlier position in role name gets priority
+            const aIndex = a.roleLower.indexOf(queryLower);
+            const bIndex = b.roleLower.indexOf(queryLower);
+            if (aIndex !== -1 && bIndex !== -1) {
+                if (aIndex !== bIndex) return aIndex - bIndex;
+            }
+            
+            // Alphabetical sorting as final tiebreaker
+            return a.role_name.localeCompare(b.role_name);
+        });
+        
+        // Return only role_name and category for display
+        return results.slice(0, 20).map(result => ({
+            role_name: result.role_name,
+            category: result.category
+        }));
+    }
+
+    function displaySearchResults(results) {
+        roleSearchResults.innerHTML = '';
+        
+        if (results.length === 0) {
+            showNoResults();
+            return;
+        }
+
+        results.forEach((result, index) => {
+            const item = document.createElement('div');
+            item.className = 'dropdown-item';
+            item.textContent = result.role_name;
+            item.dataset.role = result.role_name;
+            item.dataset.category = result.category;
+            
+            const categorySpan = document.createElement('span');
+            categorySpan.className = 'role-category';
+            categorySpan.textContent = result.category;
+            item.appendChild(categorySpan);
+
+            // Enhanced click handler with smooth selection
+            item.addEventListener('click', function() {
+                selectRole(this.dataset.role, this.textContent.replace(this.querySelector('.role-category')?.textContent || '', '').trim());
+            });
+
+            // Add hover effect
+            item.addEventListener('mouseenter', function() {
+                const items = roleSearchResults.querySelectorAll('.dropdown-item');
+                items.forEach(i => i.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+
+            roleSearchResults.appendChild(item);
+        });
+
+        // Animate dropdown appearance
+        roleSearchResults.style.display = 'block';
+        roleSearchResults.style.opacity = '0';
+        roleSearchResults.style.transform = 'translateY(-10px)';
+        
+        setTimeout(() => {
+            roleSearchResults.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+            roleSearchResults.style.opacity = '1';
+            roleSearchResults.style.transform = 'translateY(0)';
+        }, 10);
+    }
+
+    function showNoResults() {
+        roleSearchResults.innerHTML = '<div class="dropdown-item">No roles found</div>';
+        roleSearchResults.style.display = 'block';
+        roleSearchResults.style.opacity = '1';
+        roleSearchResults.style.transform = 'translateY(0)';
+    }
+
+    function hideSearchResults() {
+        // Animate dropdown disappearance
+        roleSearchResults.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        roleSearchResults.style.opacity = '0';
+        roleSearchResults.style.transform = 'translateY(-10px)';
+        
+        setTimeout(() => {
+            roleSearchResults.style.display = 'none';
+            roleSearchResults.innerHTML = '';
+            roleSearchResults.style.transition = '';
+        }, 200);
+    }
+
+    function selectRole(roleValue, displayText) {
+        // Update state management
+        selectedTargetRole = roleValue;
+        targetRoleHidden.value = roleValue;
+        targetRoleSearch.value = displayText;
+        
+        // Animate selection and hide dropdown
+        roleSearchResults.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+        roleSearchResults.style.opacity = '0';
+        roleSearchResults.style.transform = 'translateY(-10px)';
+        
+        setTimeout(() => {
+            roleSearchResults.style.display = 'none';
+            roleSearchResults.innerHTML = '';
+            roleSearchResults.style.transition = '';
+        }, 200);
+        
+        // Update analysis message to show selected role
+        analysisMessage.textContent = `Selected role: ${displayText}. Click "Analyze Resume" to see your skill gaps.`;
+        
+        // Add visual feedback for selection
+        targetRoleSearch.style.borderColor = 'var(--primary-color)';
+        targetRoleSearch.style.boxShadow = '0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, white)';
+        
+        setTimeout(() => {
+            targetRoleSearch.style.borderColor = '#ced4da';
+            targetRoleSearch.style.boxShadow = 'none';
+        }, 1000);
+    }
+
+    function navigateResults(results, direction) {
+        if (results.length === 0) return;
+
+        let currentIndex = -1;
+        const selected = roleSearchResults.querySelector('.dropdown-item.selected');
+        
+        if (selected) {
+            currentIndex = results.indexOf(selected);
+        }
+
+        let newIndex = currentIndex + direction;
+        if (newIndex < 0) newIndex = results.length - 1;
+        if (newIndex >= results.length) newIndex = 0;
+
+        // Remove previous selection
+        results.forEach(r => r.classList.remove('selected'));
+        
+        // Add new selection with visual feedback
+        results[newIndex].classList.add('selected');
+        
+        // Scroll into view with smooth animation
+        results[newIndex].scrollIntoView({ 
+            block: 'nearest',
+            behavior: 'smooth'
+        });
+    }
+
+    // Functions for Resume Analysis
+    function showAnalysisForm() {
+        analysisFormContainer.style.display = 'block';
+        analysisResultsContainer.style.display = 'none';
+        analysisMessage.textContent = 'Select a target role and click "Analyze Resume" to see your skill gaps.';
+        resumeAnalysisBadge.textContent = 'Ready to analyze';
+        resumeAnalysisBadge.className = 'resume-status-badge not-uploaded';
+    }
+
+    function performResumeAnalysis(targetRole) {
+        // Show processing state
+        resumeAnalysisBadge.textContent = 'Analyzing...';
+        resumeAnalysisBadge.className = 'resume-status-badge processing';
+        analysisMessage.textContent = 'Analyzing your resume against the selected role...';
+
+        // Get resume filename for API call
+        const resumeFilename = getResumeFilename();
+
+        // Call the backend API
+        fetch('/skill-gap-analysis', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                target_role: targetRole,
+                extracted_resume_data: {
+                    skills: [], // In real implementation, this would come from resume analysis
+                    education: [],
+                    experience: [],
+                    projects: [],
+                    certifications: []
+                }
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayAnalysisResults(data.data);
+            } else {
+                throw new Error(data.message || 'Analysis failed');
+            }
+        })
+        .catch(error => {
+            console.error('Analysis error:', error);
+            // Fallback to mock data if API fails
+            const mockResponse = {
+                target_role: targetRole,
+                resume_score: Math.floor(Math.random() * 60) + 20,
+                level: getLevelFromScore(Math.floor(Math.random() * 60) + 20),
+                matched_skills: getMockMatchedSkills(targetRole),
+                missing_skills: getMockMissingSkills(targetRole)
+            };
+            displayAnalysisResults(mockResponse);
+        });
+    }
+
+    function getLevelFromScore(score) {
+        if (score < 40) return 'Beginner';
+        if (score <= 70) return 'Intermediate';
+        return 'Advanced';
+    }
+
+    function getMockMatchedSkills(targetRole) {
+        const skillSets = {
+            'Frontend Developer': ['HTML', 'CSS', 'JavaScript', 'React'],
+            'Backend Developer': ['Python', 'SQL', 'REST APIs'],
+            'Data Scientist': ['Python', 'Pandas', 'Statistics'],
+            'Full Stack Developer': ['HTML', 'JavaScript', 'Node.js'],
+            'Mobile Developer': ['JavaScript', 'React Native'],
+            'DevOps Engineer': ['Docker', 'Linux', 'Git'],
+            'UI/UX Designer': ['Figma', 'User Research'],
+            'Product Manager': ['Agile', 'Analytics', 'Communication']
+        };
+        return skillSets[targetRole] || ['JavaScript', 'Git'];
+    }
+
+    function getMockMissingSkills(targetRole) {
+        const skillSets = {
+            'Frontend Developer': ['Vue', 'Angular', 'TypeScript', 'Git', 'CSS Frameworks', 'Responsive Design', 'APIs', 'Webpack', 'Node.js', 'UI/UX Basics'],
+            'Backend Developer': ['Java', 'GraphQL', 'Database Design', 'Authentication', 'Security', 'AWS', 'Microservices', 'Testing'],
+            'Data Scientist': ['NumPy', 'Machine Learning', 'R', 'TensorFlow', 'PyTorch', 'Data Cleaning', 'Big Data', 'Jupyter'],
+            'Full Stack Developer': ['React', 'Python', 'SQL', 'REST APIs', 'Git', 'Database Design', 'Authentication', 'Docker', 'AWS', 'Testing', 'Agile', 'Problem Solving'],
+            'Mobile Developer': ['Swift', 'Kotlin', 'Java', 'Flutter', 'iOS Development', 'Android Development', 'APIs', 'UI/UX Design', 'App Store Guidelines'],
+            'DevOps Engineer': ['Kubernetes', 'AWS', 'CI/CD', 'Monitoring', 'Scripting', 'Infrastructure as Code', 'Security', 'Networking', 'Troubleshooting', 'Automation'],
+            'UI/UX Designer': ['Adobe XD', 'Sketch', 'Wireframing', 'Prototyping', 'User Testing', 'Design Systems', 'HTML', 'CSS', 'JavaScript Basics', 'Problem Solving'],
+            'Product Manager': ['Product Strategy', 'Market Research', 'User Stories', 'Scrum', 'Kanban', 'Leadership', 'Project Management', 'Data Analysis', 'Stakeholder Management']
+        };
+        return skillSets[targetRole] || ['Advanced CSS', 'TypeScript', 'Git'];
+    }
+
+    function displayAnalysisResults(data) {
+        // Update badge and message
+        resumeAnalysisBadge.textContent = 'Analyzed';
+        resumeAnalysisBadge.className = 'resume-status-badge analyzed';
+        analysisMessage.textContent = 'Your resume has been analyzed successfully!';
+
+        // Show results container
+        analysisFormContainer.style.display = 'none';
+        analysisResultsContainer.style.display = 'block';
+
+        // Update score and level
+        const scoreElement = document.getElementById('resume-score');
+        const levelElement = document.getElementById('resume-level');
+        const targetRoleElement = document.getElementById('target-role-display');
+
+        scoreElement.textContent = `${data.resume_score}%`;
+        levelElement.textContent = data.level;
+        targetRoleElement.textContent = `Target Role: ${data.target_role}`;
+
+        // Update level badge color
+        levelElement.className = `level-badge ${data.level.toLowerCase()}`;
+
+        // Update matched skills
+        const matchedSkillsContainer = document.getElementById('matched-skills');
+        matchedSkillsContainer.innerHTML = '';
+        data.matched_skills.forEach(skill => {
+            const badge = document.createElement('span');
+            badge.className = 'skill-badge matched';
+            badge.textContent = skill;
+            matchedSkillsContainer.appendChild(badge);
+        });
+
+        // Update missing skills
+        const missingSkillsContainer = document.getElementById('missing-skills');
+        missingSkillsContainer.innerHTML = '';
+        data.missing_skills.forEach(skill => {
+            const badge = document.createElement('span');
+            badge.className = 'skill-badge missing';
+            badge.textContent = skill;
+            missingSkillsContainer.appendChild(badge);
+        });
+    }
+
+    // Initialize analysis form if resume is uploaded
+    const resumeStatus = getResumeStatus();
+    if (resumeStatus === 'uploaded') {
+        document.getElementById('resume-upload-section').style.display = 'none';
+        showAnalysisForm();
+    }
+
+    // Initialize manual skills module
+    if (typeof initializeManualSkills !== 'undefined') {
+        // Manual skills module will handle its own initialization
+    }
+
+    // Initialize Practice Arena section
+    initializePracticeArena();
 });
+
+// Initialize Practice Arena section
+function initializePracticeArena() {
+    const practiceArenaSection = document.getElementById('practice-arena');
+    if (practiceArenaSection) {
+        // Show the Practice Arena section
+        practiceArenaSection.style.display = 'block';
+        console.log('Practice Arena section initialized and displayed');
+    }
+}

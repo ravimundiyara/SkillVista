@@ -1,15 +1,17 @@
 """
 SkillVista Backend (Flask)
 
-This service will later handle:
-- Resume upload (local file storage for now)
-- Resume text extraction (PDF/DOCX)
-- Skill extraction / analysis workflow
+This service handles:
+- Resume upload (local file storage)
+- Resume text extraction (PDF/DOCX/DOC)
+- NLP-based structured data extraction
+- Skill analysis and categorization
 
-For now, it only includes:
-- Flask app initialization
-- Upload folder configuration
-- A basic home route for testing
+Features:
+- /analyze-resume endpoint for comprehensive resume analysis
+- Support for PDF, DOC, and DOCX formats
+- Extracts name, email, phone, education, skills, experience, projects, certifications
+- Returns structured JSON with metadata about the analysis process
 """
 
 from __future__ import annotations
@@ -21,57 +23,12 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 
-
-def extract_text_from_pdf(pdf_path: str | Path) -> str:
-    """
-    Extract text from a multi-page PDF file.
-
-    Uses `pdfplumber` (built on pdfminer.six) which is a commonly used,
-    reliable choice for resume-style PDFs.
-
-    Args:
-        pdf_path: Path to a PDF file on disk.
-
-    Returns:
-        Extracted text as a single string (pages separated by blank lines).
-
-    Raises:
-        FileNotFoundError: If the file does not exist.
-        ValueError: If the file is not a PDF by extension.
-        RuntimeError: If the PDF cannot be opened/parsed.
-    """
-    path = Path(pdf_path)
-
-    if not path.exists():
-        raise FileNotFoundError(f"PDF file not found: {path}")
-
-    if path.suffix.lower() != ".pdf":
-        raise ValueError("Invalid file type: expected a .pdf file")
-
-    try:
-        import pdfplumber  # local import keeps startup lightweight if unused
-    except Exception as exc:  # pragma: no cover
-        raise RuntimeError(
-            "Missing dependency: pdfplumber is required for PDF extraction"
-        ) from exc
-
-    try:
-        pages_text: list[str] = []
-        with pdfplumber.open(str(path)) as pdf:
-            for page_index, page in enumerate(pdf.pages, start=1):
-                # page.extract_text() may return None for scanned/image-only pages.
-                text = page.extract_text() or ""
-                text = text.strip()
-                if text:
-                    pages_text.append(text)
-                else:
-                    logging.getLogger(__name__).warning(
-                        "No extractable text on page %s of %s", page_index, path.name
-                    )
-
-        return "\n\n".join(pages_text).strip()
-    except Exception as exc:
-        raise RuntimeError(f"Failed to extract text from PDF: {path.name}") from exc
+# Import the resume analyzer, skill gap analysis, and job roles
+from resume_analyzer import create_analyze_resume_endpoint, get_sample_resume_data
+from skill_gap_analysis import create_skill_gap_analysis_endpoint, get_sample_skill_gap_analysis
+from job_roles import create_job_roles_endpoint, get_sample_job_roles
+from skill_library import get_skill_library, search_skills, validate_skills, get_all_skills
+from create_manual_skills_endpoint import create_manual_skills_endpoint
 
 
 def create_app() -> Flask:
@@ -93,7 +50,7 @@ def create_app() -> Flask:
     # Flask config values (available via app.config["UPLOAD_FOLDER"])
     app.config["UPLOAD_FOLDER"] = str(upload_dir)
 
-    # Allowed resume file extensions (text extraction will be added later)
+    # Allowed resume file extensions
     app.config["ALLOWED_RESUME_EXTENSIONS"] = {"pdf", "doc", "docx"}
 
     # Optional hard limits (adjust later as needed)
@@ -107,10 +64,25 @@ def create_app() -> Flask:
         """
         return jsonify(
             status="ok",
-            service="skillvista-backend",
-            upload_folder=app.config["UPLOAD_FOLDER"],
-            note="Resume upload/extraction endpoints will be added later.",
+            service="skillvista-resume-analyzer",
+            version="1.0.0",
+            endpoints={
+                "analyze_resume": "/analyze-resume (POST)",
+                "sample_data": "/sample-data (GET)"
+            },
+            supported_formats=["PDF (.pdf)", "Word (.doc, .docx)"],
+            extracted_fields=[
+                "name", "email", "phone", "education", "skills", 
+                "experience", "projects", "certifications"
+            ]
         )
+
+    @app.get("/sample-data")
+    def sample_data():
+        """
+        Return sample resume data structure for testing and documentation.
+        """
+        return jsonify(get_sample_resume_data())
 
     def _is_allowed_resume_filename(filename: str) -> bool:
         """
@@ -127,13 +99,14 @@ def create_app() -> Flask:
         """
         Accept a resume file upload and save to the local uploads folder.
 
-        Frontend will connect later.
+        This endpoint is kept for backward compatibility and testing.
+        For analysis, use /analyze-resume instead.
         """
         # Expect multipart/form-data with a file field named "resume"
         if "resume" not in request.files:
             return (
                 jsonify(
-                    ok=False,
+                    success=False,
                     error="missing_file",
                     message='No file part found. Use form field name "resume".',
                 ),
@@ -146,7 +119,7 @@ def create_app() -> Flask:
         if not file or not file.filename:
             return (
                 jsonify(
-                    ok=False,
+                    success=False,
                     error="empty_filename",
                     message="No file selected.",
                 ),
@@ -159,7 +132,7 @@ def create_app() -> Flask:
             allowed = sorted(app.config["ALLOWED_RESUME_EXTENSIONS"])
             return (
                 jsonify(
-                    ok=False,
+                    success=False,
                     error="invalid_file_type",
                     message=f"Invalid file type. Allowed: {', '.join(allowed)}.",
                 ),
@@ -174,13 +147,28 @@ def create_app() -> Flask:
         file.save(str(save_path))
 
         return jsonify(
-            ok=True,
+            success=True,
             message="Resume uploaded successfully.",
             filename=safe_filename,
             upload_path=str(save_path),
         )
 
-    # TODO: Add extraction endpoints / background analysis later.
+    # --- Resume Analysis Endpoint ---
+    # This is the main endpoint for resume analysis
+    create_analyze_resume_endpoint(app)
+    
+    # --- Skill Gap Analysis Endpoints ---
+    # These endpoints provide skill gap analysis functionality
+    create_skill_gap_analysis_endpoint(app)
+    
+    # --- Job Roles Endpoints ---
+    # These endpoints provide job roles configuration and search functionality
+    create_job_roles_endpoint(app)
+
+    # --- Manual Skills Endpoints ---
+    # These endpoints provide manual skill management functionality
+    from create_manual_skills_endpoint import create_manual_skills_endpoint
+    create_manual_skills_endpoint(app)
 
     return app
 
