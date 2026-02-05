@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/learning.css">
     <link rel="stylesheet" href="assets/css/practice-arena.css">
+    <link rel="stylesheet" href="assets/css/performance-analytics.css">
+    <link rel="stylesheet" href="assets/css/job-vacancies.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Dashboard Specific Styles */
         body {
@@ -438,10 +441,11 @@
             <nav class="sidebar-nav">
                 <ul>
                     <li><a href="dashboard.html" class="active">Dashboard</a></li>
-                    <li><a href="#course-learning-section">Courses & Learning</a></li>
+                    <li><a href="#course-learning-section" target="_self">Courses & Learning</a></li>
                     <li><a href="#practice-arena">Practice Arena</a></li>
                     <li><a href="resume-manager.html">Resume & Skills</a></li>
-                    <li><a href="#">Assessments</a></li>
+                    <li><a href="#">Vacancies</a></li>
+                    <li><a href="#">Analysis</a></li>
                     <li><a href="#">Profile Settings</a></li>
                     <li><a href="index.html">Logout</a></li>
                 </ul>
@@ -765,6 +769,337 @@
                 </div>
             </section>
 
+            <!-- Performance Analytics Section -->
+            <section class="performance-analytics-section" aria-label="Performance Analytics">
+                <div class="performance-analytics-header">
+                    <h2>Performance Analytics</h2>
+                    <p>Track your progress and identify areas for improvement</p>
+                </div>
+
+                <!-- Top Metric Cards -->
+                <div class="metrics-grid" aria-label="Performance metrics">
+                    <!-- Avg. Accuracy Card -->
+                    <article class="metric-card" aria-label="Average Accuracy">
+                        <i class="fas fa-bullseye metric-icon"></i>
+                        <span class="metric-value">83%</span>
+                        <span class="metric-label">Avg. Accuracy</span>
+                        <span class="metric-indicator">
+                            <i class="fas fa-arrow-up"></i> +5%
+                        </span>
+                    </article>
+
+                    <!-- Problems This Week Card -->
+                    <article class="metric-card" aria-label="Problems This Week">
+                        <i class="fas fa-chart-bar metric-icon"></i>
+                        <span class="metric-value">63</span>
+                        <span class="metric-label">Problems This Week</span>
+                        <span class="metric-indicator">
+                            <i class="fas fa-arrow-up"></i> +12
+                        </span>
+                    </article>
+
+                    <!-- Credits Earned Card -->
+                    <article class="metric-card" aria-label="Credits Earned">
+                        <i class="fas fa-trophy metric-icon"></i>
+                        <span class="metric-value">1,040</span>
+                        <span class="metric-label">Credits Earned</span>
+                        <span class="metric-indicator">
+                            <i class="fas fa-arrow-up"></i> +180
+                        </span>
+                    </article>
+
+                    <!-- Active Days Card -->
+                    <article class="metric-card" aria-label="Active Days">
+                        <i class="fas fa-calendar-alt metric-icon"></i>
+                        <span class="metric-value">7/7</span>
+                        <span class="metric-label">Active Days</span>
+                        <span class="metric-indicator">
+                            <i class="fas fa-star"></i> Streak!
+                        </span>
+                    </article>
+                </div>
+
+                <!-- Analytics Charts Grid -->
+                <div class="analytics-grid" aria-label="Analytics charts">
+                    <!-- Weekly Activity Chart -->
+                    <article class="analytics-card" aria-label="Weekly Activity">
+                        <div class="analytics-card-header">
+                            <div>
+                                <h3 class="analytics-card-title">Weekly Activity</h3>
+                                <p class="analytics-card-subtitle">Problems solved per day</p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="weeklyActivityChart"></canvas>
+                        </div>
+                    </article>
+
+                    <!-- Readiness Score Trend -->
+                    <article class="analytics-card" aria-label="Readiness Score Trend">
+                        <div class="analytics-card-header">
+                            <div>
+                                <h3 class="analytics-card-title">Readiness Score Trend</h3>
+                                <p class="analytics-card-subtitle">Progress over time</p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="readinessScoreChart"></canvas>
+                        </div>
+                    </article>
+
+                    <!-- Skill-wise Accuracy -->
+                    <article class="analytics-card" aria-label="Skill-wise Accuracy">
+                        <div class="analytics-card-header">
+                            <div>
+                                <h3 class="analytics-card-title">Skill-wise Accuracy</h3>
+                                <p class="analytics-card-subtitle">Performance by skill</p>
+                            </div>
+                        </div>
+                        <div class="skill-progress-container">
+                            <div class="skill-progress-item">
+                                <div class="skill-progress-header">
+                                    <span>JavaScript</span>
+                                    <span>92%</span>
+                                </div>
+                                <div class="skill-progress-bar">
+                                    <div class="skill-progress-fill strong animate-progress" style="--target-width: 92%"></div>
+                                </div>
+                                <span class="skill-attempts">156 attempts</span>
+                            </div>
+                            
+                            <div class="skill-progress-item">
+                                <div class="skill-progress-header">
+                                    <span>TypeScript</span>
+                                    <span>78%</span>
+                                </div>
+                                <div class="skill-progress-bar">
+                                    <div class="skill-progress-fill good animate-progress" style="--target-width: 78%"></div>
+                                </div>
+                                <span class="skill-attempts">89 attempts</span>
+                            </div>
+                            
+                            <div class="skill-progress-item">
+                                <div class="skill-progress-header">
+                                    <span>React</span>
+                                    <span>85%</span>
+                                </div>
+                                <div class="skill-progress-bar">
+                                    <div class="skill-progress-fill good animate-progress" style="--target-width: 85%"></div>
+                                </div>
+                                <span class="skill-attempts">123 attempts</span>
+                            </div>
+                            
+                            <div class="skill-progress-item">
+                                <div class="skill-progress-header">
+                                    <span>System Design</span>
+                                    <span>65%</span>
+                                </div>
+                                <div class="skill-progress-bar">
+                                    <div class="skill-progress-fill improving animate-progress" style="--target-width: 65%"></div>
+                                </div>
+                                <span class="skill-attempts">45 attempts</span>
+                            </div>
+                            
+                            <div class="skill-progress-item">
+                                <div class="skill-progress-header">
+                                    <span>Git</span>
+                                    <span>95%</span>
+                                </div>
+                                <div class="skill-progress-bar">
+                                    <div class="skill-progress-fill strong animate-progress" style="--target-width: 95%"></div>
+                                </div>
+                                <span class="skill-attempts">67 attempts</span>
+                            </div>
+                        </div>
+                    </article>
+
+                    <!-- Problem Distribution -->
+                    <article class="analytics-card" aria-label="Problem Distribution">
+                        <div class="analytics-card-header">
+                            <div>
+                                <h3 class="analytics-card-title">Problem Distribution</h3>
+                                <p class="analytics-card-subtitle">Difficulty breakdown</p>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="problemDistributionChart"></canvas>
+                        </div>
+                        <div class="donut-legend">
+                            <div class="legend-item">
+                                <span class="legend-color" style="background-color: #28a745;"></span>
+                                <span>Easy (65%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background-color: #17a2b8;"></span>
+                                <span>Medium (25%)</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-color" style="background-color: #ffc107;"></span>
+                                <span>Hard (10%)</span>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <!-- Insights Section -->
+                <div class="insights-section" aria-label="Performance insights">
+                    <div class="insight-card focus-area">
+                        <h4>Focus Area</h4>
+                        <p>System Design accuracy is your lowest performing skill. Consider focusing on this area to improve your overall readiness score.</p>
+                    </div>
+                    
+                    <div class="insight-card productivity">
+                        <h4>Most Productive Day</h4>
+                        <p>Friday is your most productive day with 15 problems solved. Try to maintain this energy level throughout the week.</p>
+                    </div>
+                    
+                    <div class="insight-card suggestion">
+                        <h4>Improvement Suggestion</h4>
+                        <p>Improve System Design accuracy by practicing Medium & Hard problems. Focus on architectural patterns and scalability concepts.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Job & Internship Vacancies Section -->
+            <section class="job-vacancies-section" aria-label="Job & Internship Vacancies">
+                <div class="job-vacancies-header">
+                    <h2>Job & Internship Vacancies</h2>
+                    <p>Explore opportunities and match your skills with job requirements</p>
+                </div>
+
+                <!-- Search & Filters Section -->
+                <div class="filters-section">
+                    <div class="filters-grid">
+                        <div class="filter-group">
+                            <label class="filter-label" for="job-search">Search Jobs</label>
+                            <input 
+                                type="text" 
+                                id="job-search" 
+                                class="search-input" 
+                                placeholder="Search by title, company, or skills..."
+                            >
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="category-filter">Category</label>
+                            <select id="category-filter" class="filter-select">
+                                <option value="all">All Categories</option>
+                                <option value="web-development">Web Development</option>
+                                <option value="data-science">Data Science</option>
+                                <option value="ai-ml">AI/ML</option>
+                                <option value="backend-development">Backend Development</option>
+                                <option value="devops">DevOps</option>
+                                <option value="mobile-development">Mobile Development</option>
+                                <option value="cybersecurity">Cybersecurity</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label" for="type-filter">Job Type</label>
+                            <select id="type-filter" class="filter-select">
+                                <option value="all">All Types</option>
+                                <option value="full-time">Full-time</option>
+                                <option value="part-time">Part-time</option>
+                                <option value="internship">Internship</option>
+                                <option value="contract">Contract</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label class="filter-label">&nbsp;</label>
+                            <button class="filter-btn" onclick="resetFilters()">
+                                <i class="fas fa-sync-alt"></i> Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Stats Summary Cards -->
+                <div class="stats-grid" aria-label="Job statistics">
+                    <div class="stat-card">
+                        <i class="fas fa-briefcase stat-icon"></i>
+                        <span class="stat-value" id="total-openings">0</span>
+                        <span class="stat-label">Total Openings</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-graduation-cap stat-icon"></i>
+                        <span class="stat-value" id="internships">0</span>
+                        <span class="stat-label">Internships</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-star stat-icon"></i>
+                        <span class="stat-value" id="good-matches">0</span>
+                        <span class="stat-label">Good Matches</span>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fas fa-tags stat-icon"></i>
+                        <span class="stat-value" id="your-skills">0</span>
+                        <span class="stat-label">Your Skills</span>
+                    </div>
+                </div>
+
+                <!-- Vacancies Grid -->
+                <div class="vacancies-grid" id="jobs-container" aria-label="Job listings">
+                    <!-- Jobs will be dynamically generated here -->
+                </div>
+            </section>
+
+            <!-- Skill Gap Modal -->
+            <div id="skill-gap-modal" class="skill-gap-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div>
+                            <h3 class="modal-title" id="modal-job-title">Job Title</h3>
+                            <p class="modal-subtitle" id="modal-company">Company Name</p>
+                        </div>
+                        <button class="close-modal" onclick="closeModal()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="match-score">
+                            <div class="score-circle">
+                                <span class="score-value" id="score-value">0%</span>
+                                <span class="score-text">Match Score</span>
+                            </div>
+                            <p class="match-details" id="match-details">You have 0 of 0 required skills</p>
+                        </div>
+                        
+                        <div class="skill-section">
+                            <h4 class="skill-section-title">
+                                <i class="fas fa-check-circle" style="color: #28a745;"></i> Matching Skills
+                            </h4>
+                            <div class="skill-list" id="matching-skills">
+                                <!-- Matching skills will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="skill-section">
+                            <h4 class="skill-section-title">
+                                <i class="fas fa-times-circle" style="color: #dc3545;"></i> Missing Skills
+                            </h4>
+                            <div class="skill-list" id="missing-skills">
+                                <!-- Missing skills will be populated here -->
+                            </div>
+                        </div>
+                        
+                        <div class="skill-section">
+                            <h4 class="skill-section-title">
+                                <i class="fas fa-star" style="color: #ffc107;"></i> Nice-to-Have Skills
+                            </h4>
+                            <div class="skill-list" id="nice-to-have-skills">
+                                <!-- Nice-to-have skills will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-actions">
+                        <button class="action-btn primary-btn view-full-job-btn">
+                            <i class="fas fa-external-link-alt"></i> View Full Job
+                        </button>
+                        <button class="action-btn secondary-btn start-learning-btn">
+                            <i class="fas fa-graduation-cap"></i> Start Learning
+                        </button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Placeholder for main content/charts -->
             <section class="main-dashboard-area" aria-label="Next learning steps">
                 <h2>Your Next Steps</h2>
@@ -837,6 +1172,9 @@
         </div>
     </footer>
 
+    <!-- Chart.js Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <script src="assets/js/job-roles.js"></script>
     <script src="assets/js/job-role-autocomplete.js"></script>
     <script src="assets/js/skill-analysis.js"></script>
@@ -844,5 +1182,7 @@
     <script src="assets/js/manual-skills.js"></script>
     <script src="assets/js/learning.js"></script>
     <script src="assets/js/practice-arena.js"></script>
+    <script src="assets/js/performance-analytics.js"></script>
+    <script src="assets/js/job-vacancies.js"></script>
 </body>
 </html>
