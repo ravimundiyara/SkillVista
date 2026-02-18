@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Courses & Learning - SkillVista</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="assets/css/learning.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Courses & Learning Specific Styles */
+        .course-learning-section {
+            margin-top: 30px;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .page-header p {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        /* Video Player Section */
+        .video-player-section {
+            margin-bottom: 40px;
+        }
+
+        .video-container {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .video-header {
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .video-header h2 {
+            margin: 0 0 10px 0;
+            color: var(--text-color);
+        }
+
+        .video-category {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            overflow: hidden;
+        }
+
+        .youtube-iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 8px;
+            border: none;
+        }
+
+        .video-placeholder {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px dashed #dee2e6;
+        }
+
+        .video-placeholder i {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .video-placeholder p {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* Courses Grid */
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .course-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .course-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .course-category {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .course-lessons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .lesson-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .lesson-item:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 10%, white);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .lesson-item.active {
+            background-color: color-mix(in srgb, var(--primary-color) 20%, white);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Progress Tracking */
+        .progress-section {
+            margin-top: 30px;
+        }
+
+        .progress-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .progress-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .progress-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .progress-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .progress-stat {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .progress-label {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .progress-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .progress-bar-container {
+            background-color: #e9ecef;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-percentage {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        /* Learning Path */
+        .learning-path-section {
+            margin-top: 30px;
+        }
+
+        .learning-path-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .learning-path-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .learning-path-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .learning-path-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .path-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s ease;
+        }
+
+        .path-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .path-item:last-child {
+            border-bottom: none;
+        }
+
+        .path-icon {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            width: 40px;
+            text-align: center;
+        }
+
+        .path-content {
+            flex: 1;
+        }
+
+        .path-title {
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .path-description {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .path-status {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        .path-status.completed {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .path-status.in-progress {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .path-status.not-started {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #e9ecef;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .video-wrapper {
+                padding-bottom: 56.25%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="index.html" class="logo">SkillVista</a>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="resume.html">Resume & Skills</a></li>
+                    <li><a href="analysis.html">Skill Analysis</a></li>
+                    <li><a href="vacancies.html">Vacancy</a></li>
+                    <li><a href="learning.html" class="active">Courses & Learning</a></li>
+                    <li><a href="practice.html">Practice Arena</a></li>
+                    <li><a href="analytics.html">Analytics</a></li>
+                    <li><a href="credits.html">Credits</a></li>
+                    <li><a href="settings.html">Profile Settings</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" aria-label="Course & Learning">
+            <header class="dashboard-header">
+                <h1>Courses & Learning</h1>
+                <p>Learn from curated YouTube playlists for each technology stack</p>
+            </header>
+
+            <!-- Video Player Section -->
+            <section class="video-player-section">
+                <div class="video-container">
+                    <div class="video-header">
+                        <h2 id="current-video-title">Select a course to begin learning</h2>
+                        <span class="video-category" id="current-category">No course selected</span>
+                    </div>
+                    <div class="video-wrapper">
+                        <div id="video-placeholder" class="video-placeholder">
+                            <i class="fas fa-play-circle"></i>
+                            <p>Click on any lesson to start watching</p>
+                        </div>
+                        <iframe id="youtube-player" 
+                                class="youtube-iframe" 
+                                src="" 
+                                title="YouTube video player" 
+                                frameborder="0" 
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                                allowfullscreen>
+                        </iframe>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Tracking Section -->
+            <section class="progress-section">
+                <div class="progress-card">
+                    <div class="progress-header">
+                        <h3 class="progress-title">Learning Progress</h3>
+                        <div class="progress-actions">
+                            <button class="btn btn-secondary" id="reset-progress-btn">
+                                <i class="fas fa-undo"></i> Reset
+                            </button>
+                            <button class="btn btn-primary" id="export-progress-btn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-stats">
+                        <div class="progress-stat">
+                            <div class="progress-label">Total Courses</div>
+                            <div class="progress-value" id="total-courses">0</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="progress-label">Completed</div>
+                            <div class="progress-value" id="completed-courses">0</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="progress-label">In Progress</div>
+                            <div class="progress-value" id="in-progress-courses">0</div>
+                        </div>
+                        <div class="progress-stat">
+                            <div class="progress-label">Total Lessons</div>
+                            <div class="progress-value" id="total-lessons">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="overall-progress-bar"></div>
+                    </div>
+                    <div class="progress-percentage" id="overall-progress-text">0% Complete</div>
+                </div>
+            </section>
+
+            <!-- Learning Path Section -->
+            <section class="learning-path-section">
+                <div class="learning-path-card">
+                    <div class="learning-path-header">
+                        <h3 class="learning-path-title">Recommended Learning Path</h3>
+                        <div class="learning-path-actions">
+                            <button class="btn btn-secondary" id="shuffle-path-btn">
+                                <i class="fas fa-random"></i> Shuffle
+                            </button>
+                            <button class="btn btn-primary" id="start-path-btn">
+                                <i class="fas fa-play"></i> Start Path
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="learning-path-list">
+                        <!-- Learning path items will be populated here -->
+                    </div>
+                    
+                    <div id="no-path-message" class="no-skills" style="display: none;">
+                        <i class="fas fa-road" style="font-size: 2rem; color: #6c757d; margin-bottom: 10px;"></i>
+                        <p>Complete a skill analysis to receive a personalized learning path.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Courses Grid -->
+            <section class="course-learning-section">
+                <div class="page-header">
+                    <h2>Available Courses</h2>
+                    <p>Explore our curated collection of courses</p>
+                </div>
+
+                <div class="courses-grid" id="courses-grid">
+                    <!-- Courses will be dynamically generated here -->
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 SkillVista. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/learning.js"></script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Credits - SkillVista</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Credits Specific Styles */
+        .credits-section {
+            margin-top: 30px;
+        }
+
+        .credits-header {
+            margin-bottom: 30px;
+        }
+
+        .credits-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .credits-header p {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        /* Credits Summary Card */
+        .credits-summary-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        .credits-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .credits-summary-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .credits-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .total-credits-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .credits-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #007bff, #28a745);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+
+        .credits-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .credits-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+        }
+
+        .credits-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .credits-goal {
+            font-size: 1.1rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .progress-bar-container {
+            background-color: #e9ecef;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-percentage {
+            text-align: right;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        /* Credits Breakdown */
+        .credits-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .breakdown-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .breakdown-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .breakdown-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .breakdown-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Activity Timeline */
+        .activity-timeline {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .timeline-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .timeline-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            border-bottom: 1px solid #f1f3f4;
+            transition: background-color 0.2s ease;
+        }
+
+        .timeline-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .timeline-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            text-align: center;
+        }
+
+        .timeline-icon.completed {
+            color: #28a745;
+        }
+
+        .timeline-icon.attempted {
+            color: #ffc107;
+        }
+
+        .timeline-icon.learned {
+            color: #17a2b8;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-title-text {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .timeline-meta {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+
+        .timeline-credits {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+
+        /* Achievements Section */
+        .achievements-section {
+            margin-top: 30px;
+        }
+
+        .achievements-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .achievements-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .achievements-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .achievements-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .achievement-item {
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+
+        .achievement-item:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 10%, white);
+            border-color: var(--primary-color);
+        }
+
+        .achievement-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .achievement-icon.earned {
+            color: #ffc107;
+        }
+
+        .achievement-icon.pending {
+            color: #6c757d;
+            opacity: 0.5;
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .achievement-desc {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+        }
+
+        /* Certification Section */
+        .certification-section {
+            margin-top: 30px;
+        }
+
+        .certification-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .certification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .certification-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .certification-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .certification-progress {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .certification-badge {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ffc107, #fd7e14);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .certification-info {
+            flex: 1;
+        }
+
+        .certification-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 5px;
+        }
+
+        .certification-requirements {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .certification-cta {
+            text-align: right;
+        }
+
+        .btn-large {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .total-credits-display {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .certification-progress {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .certification-cta {
+                text-align: center;
+                margin-top: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="index.html" class="logo">SkillVista</a>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="resume.html">Resume & Skills</a></li>
+                    <li><a href="analysis.html">Skill Analysis</a></li>
+                    <li><a href="vacancies.html">Vacancy</a></li>
+                    <li><a href="learning.html">Courses & Learning</a></li>
+                    <li><a href="practice.html">Practice Arena</a></li>
+                    <li><a href="analytics.html">Analytics</a></li>
+                    <li><a href="credits.html" class="active">Credits</a></li>
+                    <li><a href="settings.html">Profile Settings</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" aria-label="Credits">
+            <header class="dashboard-header">
+                <h1>Credits</h1>
+                <p>Earn credits by completing activities and unlock achievements</p>
+            </header>
+
+            <!-- Credits Summary Section -->
+            <section class="credits-section">
+                <div class="credits-summary-card">
+                    <div class="credits-summary-header">
+                        <h3 class="credits-summary-title">Credit Summary</h3>
+                        <div class="credits-actions">
+                            <button class="btn btn-secondary" id="export-credits-btn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-primary" id="redeem-rewards-btn">
+                                <i class="fas fa-gift"></i> Redeem Rewards
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="total-credits-display">
+                        <div class="credits-circle">
+                            <div class="credits-value" id="total-credits-value">1,040</div>
+                            <div class="credits-label">Total Credits</div>
+                        </div>
+                        <div class="credits-details">
+                            <div class="credits-goal">Goal: 1,500 credits for certification</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar-fill" id="credits-progress-bar" style="width: 69%"></div>
+                            </div>
+                            <div class="progress-percentage" id="credits-progress-text">69% Complete</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Credits Breakdown -->
+            <section class="credits-section">
+                <div class="credits-breakdown">
+                    <div class="breakdown-card">
+                        <i class="fas fa-code-breakdown-icon"></i>
+                        <span class="breakdown-value" id="practice-credits">620</span>
+                        <span class="breakdown-label">Practice Credits</span>
+                    </div>
+                    <div class="breakdown-card">
+                        <i class="fas fa-graduation-cap breakdown-icon"></i>
+                        <span class="breakdown-value" id="learning-credits">320</span>
+                        <span class="breakdown-label">Learning Credits</span>
+                    </div>
+                    <div class="breakdown-card">
+                        <i class="fas fa-trophy breakdown-icon"></i>
+                        <span class="breakdown-value" id="bonus-credits">100</span>
+                        <span class="breakdown-label">Bonus Credits</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Activity Timeline -->
+            <section class="credits-section">
+                <div class="activity-timeline">
+                    <div class="timeline-header">
+                        <h3 class="timeline-title">Recent Activity</h3>
+                        <div class="timeline-actions">
+                            <button class="btn btn-secondary" id="filter-activity-btn">
+                                <i class="fas fa-filter"></i> Filter
+                            </button>
+                            <button class="btn btn-primary" id="view-all-activity-btn">
+                                <i class="fas fa-list"></i> View All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <i class="fas fa-check-circle timeline-icon completed"></i>
+                        <div class="timeline-content">
+                            <div class="timeline-title-text">Completed: Binary Tree Maximum Path Sum</div>
+                            <div class="timeline-meta">Practice Arena • 2 hours ago</div>
+                        </div>
+                        <div class="timeline-credits">+50</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <i class="fas fa-play-circle timeline-icon learned"></i>
+                        <div class="timeline-content">
+                            <div class="timeline-title-text">Watched: React Hooks Tutorial</div>
+                            <div class="timeline-meta">Learning • 4 hours ago</div>
+                        </div>
+                        <div class="timeline-credits">+20</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <i class="fas fa-check-circle timeline-icon completed"></i>
+                        <div class="timeline-content">
+                            <div class="timeline-title-text">Completed: Daily Challenge</div>
+                            <div class="timeline-meta">Practice Arena • 1 day ago</div>
+                        </div>
+                        <div class="timeline-credits">+100</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <i class="fas fa-graduation-cap timeline-icon learned"></i>
+                        <div class="timeline-content">
+                            <div class="timeline-title-text">Finished: JavaScript Basics Course</div>
+                            <div class="timeline-meta">Learning • 2 days ago</div>
+                        </div>
+                        <div class="timeline-credits">+150</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <i class="fas fa-check-circle timeline-icon completed"></i>
+                        <div class="timeline-content">
+                            <div class="timeline-title-text">Solved: Array Manipulation Problem</div>
+                            <div class="timeline-meta">Practice Arena • 3 days ago</div>
+                        </div>
+                        <div class="timeline-credits">+30</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Achievements Section -->
+            <section class="achievements-section">
+                <div class="achievements-card">
+                    <div class="achievements-header">
+                        <h3 class="achievements-title">Achievements</h3>
+                        <div class="achievements-actions">
+                            <button class="btn btn-secondary" id="share-achievements-btn">
+                                <i class="fas fa-share"></i> Share
+                            </button>
+                            <button class="btn btn-primary" id="view-all-achievements-btn">
+                                <i class="fas fa-award"></i> View All
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="achievements-grid">
+                        <div class="achievement-item">
+                            <i class="fas fa-star achievement-icon earned"></i>
+                            <div class="achievement-title">Early Bird</div>
+                            <div class="achievement-desc">Complete 5 activities in one day</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <i class="fas fa-fire achievement-icon earned"></i>
+                            <div class="achievement-title">Streak Master</div>
+                            <div class="achievement-desc">7-day consecutive activity streak</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <i class="fas fa-code achievement-icon pending"></i>
+                            <div class="achievement-title">Code Ninja</div>
+                            <div class="achievement-desc">Solve 50 coding problems</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <i class="fas fa-book achievement-icon pending"></i>
+                            <div class="achievement-title">Knowledge Seeker</div>
+                            <div class="achievement-desc">Complete 10 learning modules</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <i class="fas fa-trophy achievement-icon pending"></i>
+                            <div class="achievement-title">Credit Collector</div>
+                            <div class="achievement-desc">Earn 1000 credits</div>
+                        </div>
+                        
+                        <div class="achievement-item">
+                            <i class="fas fa-medal achievement-icon pending"></i>
+                            <div class="achievement-title">Perfectionist</div>
+                            <div class="achievement-desc">Achieve 90% accuracy in all skills</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Certification Section -->
+            <section class="certification-section">
+                <div class="certification-card">
+                    <div class="certification-header">
+                        <h3 class="certification-title">Certification Progress</h3>
+                        <div class="certification-actions">
+                            <button class="btn btn-secondary" id="view-requirements-btn">
+                                <i class="fas fa-list"></i> View Requirements
+                            </button>
+                            <button class="btn btn-primary" id="prepare-certification-btn">
+                                <i class="fas fa-graduation-cap"></i> Prepare for Certification
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="certification-progress">
+                        <div class="certification-badge">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <div class="certification-info">
+                            <div class="certification-name">SkillVista Certified Developer</div>
+                            <div class="certification-requirements">
+                                Requirements: 1500 credits • 80% accuracy • Complete all core modules
+                            </div>
+                        </div>
+                        <div class="certification-cta">
+                            <button class="btn btn-primary btn-large" id="start-certification-btn">
+                                <i class="fas fa-rocket"></i> Start Certification
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 SkillVista. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Credits functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update progress bar animation
+            const progressBar = document.getElementById('credits-progress-bar');
+            const progressText = document.getElementById('credits-progress-text');
+            
+            // Animate progress bar
+            setTimeout(() => {
+                progressBar.style.width = '69%';
+            }, 500);
+            
+            // Activity filtering
+            document.getElementById('filter-activity-btn').addEventListener('click', function() {
+                alert('Filter functionality would be implemented here');
+            });
+            
+            // Export credits
+            document.getElementById('export-credits-btn').addEventListener('click', function() {
+                alert('Exporting credits data...');
+            });
+            
+            // Redeem rewards
+            document.getElementById('redeem-rewards-btn').addEventListener('click', function() {
+                alert('Redeeming rewards...');
+            });
+        });
+    </script>
+</body>
+</html>

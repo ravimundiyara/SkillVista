@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job & Internship Vacancies - SkillVista</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="assets/css/job-vacancies.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Job Vacancies Specific Styles */
+        .job-vacancies-section {
+            margin-top: 30px;
+        }
+
+        .job-vacancies-header {
+            margin-bottom: 30px;
+        }
+
+        .job-vacancies-header h2 {
+            font-size: 1.8rem;
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+
+        .job-vacancies-header p {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        /* Search & Filters Section */
+        .filters-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: var(--text-color);
+            font-size: 0.9rem;
+        }
+
+        .filter-select {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .filters-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* Stats Summary Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Vacancies Grid */
+        .vacancies-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .vacancy-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            cursor: pointer;
+        }
+
+        .vacancy-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .vacancy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .vacancy-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin: 0;
+        }
+
+        .vacancy-company {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .vacancy-meta {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+        }
+
+        .vacancy-description {
+            color: var(--text-color);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .vacancy-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .match-score-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .match-score-badge.high {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .match-score-badge.medium {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .match-score-badge.low {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .apply-btn {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .apply-btn:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 80%, black);
+        }
+
+        /* No Results Message */
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--secondary-color);
+            border: 1px dashed #dee2e6;
+            border-radius: 8px;
+        }
+
+        .no-results i {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        /* Skill Gap Modal */
+        .skill-gap-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .skill-gap-modal .modal-content {
+            width: 90%;
+            max-width: 800px;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+
+        .modal-subtitle {
+            margin: 5px 0 0 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .match-score {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .match-score .score-circle {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, #007bff, #28a745);
+        }
+
+        .match-score .score-value {
+            font-size: 2rem;
+        }
+
+        .match-details {
+            font-size: 0.9rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .skill-section {
+            margin-bottom: 30px;
+        }
+
+        .skill-section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-item-modal {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            border: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .action-btn {
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .primary-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 80%, black);
+        }
+
+        .secondary-btn {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .secondary-btn:hover {
+            background-color: color-mix(in srgb, #6c757d 80%, black);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .vacancies-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .skill-gap-modal .modal-content {
+                width: 95%;
+                margin: 5% auto;
+            }
+            
+            .match-score {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .match-score .score-circle {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .match-score .score-value {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="index.html" class="logo">SkillVista</a>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="resume.html">Resume & Skills</a></li>
+                    <li><a href="analysis.html">Skill Analysis</a></li>
+                    <li><a href="vacancies.html" class="active">Vacancy</a></li>
+                    <li><a href="learning.html">Courses & Learning</a></li>
+                    <li><a href="practice.html">Practice Arena</a></li>
+                    <li><a href="analytics.html">Analytics</a></li>
+                    <li><a href="credits.html">Credits</a></li>
+                    <li><a href="settings.html">Profile Settings</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" aria-label="Job & Internship Vacancies">
+            <header class="dashboard-header">
+                <h1>Job & Internship Vacancies</h1>
+                <p>Explore opportunities and match your skills with job requirements</p>
+            </header>
+
+            <!-- Search & Filters Section -->
+            <section class="filters-section">
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label" for="job-search">Search Jobs</label>
+                        <input 
+                            type="text" 
+                            id="job-search" 
+                            class="search-input" 
+                            placeholder="Search by title, company, or skills..."
+                        >
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="category-filter">Category</label>
+                        <select id="category-filter" class="filter-select">
+                            <option value="all">All Categories</option>
+                            <option value="web-development">Web Development</option>
+                            <option value="data-science">Data Science</option>
+                            <option value="ai-ml">AI/ML</option>
+                            <option value="backend-development">Backend Development</option>
+                            <option value="devops">DevOps</option>
+                            <option value="mobile-development">Mobile Development</option>
+                            <option value="cybersecurity">Cybersecurity</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label" for="type-filter">Job Type</label>
+                        <select id="type-filter" class="filter-select">
+                            <option value="all">All Types</option>
+                            <option value="full-time">Full-time</option>
+                            <option value="part-time">Part-time</option>
+                            <option value="internship">Internship</option>
+                            <option value="contract">Contract</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">&nbsp;</label>
+                        <div class="filters-actions">
+                            <button class="btn btn-secondary" onclick="resetFilters()">
+                                <i class="fas fa-sync-alt"></i> Reset
+                            </button>
+                            <button class="btn btn-primary" onclick="applyFilters()">
+                                <i class="fas fa-filter"></i> Apply Filters
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Summary Cards -->
+            <div class="stats-grid" aria-label="Job statistics">
+                <div class="stat-card">
+                    <i class="fas fa-briefcase stat-icon"></i>
+                    <span class="stat-value" id="total-openings">0</span>
+                    <span class="stat-label">Total Openings</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-graduation-cap stat-icon"></i>
+                    <span class="stat-value" id="internships">0</span>
+                    <span class="stat-label">Internships</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-star stat-icon"></i>
+                    <span class="stat-value" id="good-matches">0</span>
+                    <span class="stat-label">Good Matches</span>
+                </div>
+                <div class="stat-card">
+                    <i class="fas fa-tags stat-icon"></i>
+                    <span class="stat-value" id="your-skills">0</span>
+                    <span class="stat-label">Your Skills</span>
+                </div>
+            </div>
+
+            <!-- Vacancies Grid -->
+            <div class="vacancies-grid" id="jobs-container" aria-label="Job listings">
+                <!-- Jobs will be dynamically generated here -->
+            </div>
+
+            <!-- No Results Message -->
+            <div id="no-results-message" class="no-results" style="display: none;">
+                <i class="fas fa-search"></i>
+                <h3>No Jobs Found</h3>
+                <p>Try adjusting your search criteria or filters to find more opportunities.</p>
+            </div>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 SkillVista. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Skill Gap Modal -->
+    <div id="skill-gap-modal" class="skill-gap-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div>
+                    <h3 class="modal-title" id="modal-job-title">Job Title</h3>
+                    <p class="modal-subtitle" id="modal-company">Company Name</p>
+                </div>
+                <button class="close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="match-score">
+                    <div class="score-circle">
+                        <span class="score-value" id="score-value">0%</span>
+                        <span class="score-text">Match Score</span>
+                    </div>
+                    <p class="match-details" id="match-details">You have 0 of 0 required skills</p>
+                </div>
+                
+                <div class="skill-section">
+                    <h4 class="skill-section-title">
+                        <i class="fas fa-check-circle" style="color: #28a745;"></i> Matching Skills
+                    </h4>
+                    <div class="skill-list" id="matching-skills">
+                        <!-- Matching skills will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="skill-section">
+                    <h4 class="skill-section-title">
+                        <i class="fas fa-times-circle" style="color: #dc3545;"></i> Missing Skills
+                    </h4>
+                    <div class="skill-list" id="missing-skills">
+                        <!-- Missing skills will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="skill-section">
+                    <h4 class="skill-section-title">
+                        <i class="fas fa-star" style="color: #ffc107;"></i> Nice-to-Have Skills
+                    </h4>
+                    <div class="skill-list" id="nice-to-have-skills">
+                        <!-- Nice-to-have skills will be populated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn primary-btn view-full-job-btn">
+                    <i class="fas fa-external-link-alt"></i> View Full Job
+                </button>
+                <button class="action-btn secondary-btn start-learning-btn">
+                    <i class="fas fa-graduation-cap"></i> Start Learning
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/job-vacancies.js"></script>
+</body>
+</html>

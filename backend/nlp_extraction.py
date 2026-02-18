@@ -6,27 +6,18 @@ including names, education, work experience, and other entities.
 """
 
 import re
-import spacy
 from typing import List, Dict, Tuple, Optional
 from collections import defaultdict
 from datetime import datetime
 
 # Try to load spaCy model, fall back to basic if not available
 try:
+    import spacy
     nlp = spacy.load("en_core_web_sm")
+except ImportError:
+    nlp = None
 except OSError:
-    # If model not found, try to download it
-    try:
-        import subprocess
-        import sys
-        subprocess.check_call([sys.executable, "-m", "spacy", "download", "en_core_web_sm"])
-        nlp = spacy.load("en_core_web_sm")
-    except:
-        # Fallback to basic English model if available
-        try:
-            nlp = spacy.load("en")
-        except:
-            nlp = None
+    nlp = None
 
 
 def extract_name(text: str) -> Optional[str]:

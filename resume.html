@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume & Skills Manager - SkillVista</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Resume Manager Specific Styles */
+        .resume-manager-section {
+            margin-top: 30px;
+        }
+
+        .resume-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+            margin-bottom: 30px;
+        }
+
+        .resume-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .resume-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .resume-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .resume-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .resume-upload-area {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .resume-upload-area:hover {
+            border-color: var(--primary-color);
+            background-color: #f8f9fa;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+        .resume-file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .file-size {
+            color: var(--secondary-color);
+            font-size: 0.9rem;
+        }
+
+        .skills-display {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .skills-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .skills-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .skills-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-item {
+            padding: 8px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid #e9ecef;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+
+        .skill-item:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 10%, white);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .skill-item.removeable {
+            cursor: pointer;
+        }
+
+        .skill-item.removeable:hover {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            color: #721c24;
+        }
+
+        .skill-item .remove-icon {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .no-skills {
+            color: var(--secondary-color);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed #dee2e6;
+            border-radius: 6px;
+        }
+
+        .skills-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .skill-summary-item {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 5px;
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Manual Skills Section */
+        .manual-skills-section {
+            margin-top: 30px;
+        }
+
+        .manual-skills-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
+            border: 1px solid #e9ecef;
+        }
+
+        .manual-skills-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .manual-skills-title {
+            margin: 0;
+            color: var(--text-color);
+            font-size: 1.2rem;
+        }
+
+        .manual-skills-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .manual-skills-display {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .skills-library {
+            border-right: 1px solid #e9ecef;
+            padding-right: 20px;
+        }
+
+        .selected-skills {
+            padding-left: 20px;
+        }
+
+        .library-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .skill-option {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skill-option:hover {
+            background-color: color-mix(in srgb, var(--primary-color) 10%, white);
+            border-color: var(--primary-color);
+        }
+
+        .skill-option.selected {
+            background-color: color-mix(in srgb, var(--primary-color) 20%, white);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .selected-skills-header {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            margin-bottom: 15px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+
+        .selected-skill-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .selected-skill-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .remove-skill-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .no-selected-skills {
+            color: var(--secondary-color);
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+            border: 1px dashed #dee2e6;
+            border-radius: 6px;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e9ecef;
+            padding-bottom: 15px;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            color: var(--text-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: var(--text-color);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 20px;
+            border-top: 1px solid #e9ecef;
+            padding-top: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .resume-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .manual-skills-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .skills-library {
+                border-right: none;
+                border-bottom: 1px solid #e9ecef;
+                padding-right: 0;
+                padding-bottom: 20px;
+                margin-bottom: 20px;
+            }
+            
+            .selected-skills {
+                padding-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <a href="index.html" class="logo">SkillVista</a>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="index.html">Dashboard</a></li>
+                    <li><a href="resume.html" class="active">Resume & Skills</a></li>
+                    <li><a href="analysis.html">Skill Analysis</a></li>
+                    <li><a href="vacancies.html">Vacancy</a></li>
+                    <li><a href="learning.html">Courses & Learning</a></li>
+                    <li><a href="practice.html">Practice Arena</a></li>
+                    <li><a href="analytics.html">Analytics</a></li>
+                    <li><a href="credits.html">Credits</a></li>
+                    <li><a href="settings.html">Profile Settings</a></li>
+                    <li><a href="index.html">Logout</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" aria-label="Resume & Skills Manager">
+            <header class="dashboard-header">
+                <h1>Resume & Skills Manager</h1>
+                <p>Upload your resume and manage your skills profile</p>
+            </header>
+
+            <!-- Resume Upload Section -->
+            <section class="resume-manager-section">
+                <div class="resume-card">
+                    <div class="resume-header">
+                        <h3 class="resume-title">Resume Upload</h3>
+                        <div class="resume-actions">
+                            <button class="btn btn-secondary" id="resume-skip-btn">
+                                <i class="fas fa-times"></i> Skip
+                            </button>
+                            <button class="btn btn-primary" id="resume-upload-btn">
+                                <i class="fas fa-upload"></i> Upload Resume
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="resume-upload-area" class="resume-upload-area">
+                        <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                        <h3>Drag & Drop Your Resume</h3>
+                        <p>Supported formats: PDF, DOC, DOCX</p>
+                        <input type="file" id="resume-file-input" accept=".pdf,.doc,.docx" style="display: none;">
+                        <button class="btn btn-outline" id="browse-files-btn" style="margin-top: 15px;">
+                            Browse Files
+                        </button>
+                    </div>
+
+                    <div id="resume-file-info" class="resume-file-info" style="display: none;">
+                        <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary-color);"></i>
+                        <div>
+                            <div class="file-name" id="file-name-display">resume.pdf</div>
+                            <div class="file-size" id="file-size-display">2.5 MB</div>
+                        </div>
+                        <div style="margin-left: auto;">
+                            <button class="btn btn-secondary" id="remove-file-btn">
+                                <i class="fas fa-times"></i> Remove
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills Display Section -->
+            <section class="resume-manager-section">
+                <div class="skills-display">
+                    <div class="skills-header">
+                        <h3 class="skills-title">Your Skills</h3>
+                        <div class="skills-actions">
+                            <button class="btn btn-secondary" id="export-skills-btn">
+                                <i class="fas fa-download"></i> Export
+                            </button>
+                            <button class="btn btn-primary" id="add-skills-btn">
+                                <i class="fas fa-plus"></i> Add Skills
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div id="skills-list" class="skills-list">
+                        <!-- Skills will be populated here -->
+                    </div>
+                    
+                    <div id="no-skills-message" class="no-skills" style="display: none;">
+                        <i class="fas fa-lightbulb" style="font-size: 2rem; color: #6c757d; margin-bottom: 10px;"></i>
+                        <p>No skills added yet. Upload your resume or add skills manually to get started.</p>
+                    </div>
+
+                    <div class="skills-summary">
+                        <div class="skill-summary-item">
+                            <div class="summary-label">Total Skills</div>
+                            <div class="summary-value" id="total-skills-count">0</div>
+                        </div>
+                        <div class="skill-summary-item">
+                            <div class="summary-label">Technical Skills</div>
+                            <div class="summary-value" id="technical-skills-count">0</div>
+                        </div>
+                        <div class="skill-summary-item">
+                            <div class="summary-label">Soft Skills</div>
+                            <div class="summary-value" id="soft-skills-count">0</div>
+                        </div>
+                        <div class="skill-summary-item">
+                            <div class="summary-label">Last Updated</div>
+                            <div class="summary-value" id="last-updated">Never</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Manual Skills Section -->
+            <section class="manual-skills-section">
+                <div class="manual-skills-card">
+                    <div class="manual-skills-header">
+                        <h3 class="manual-skills-title">Manual Skill Input</h3>
+                        <div class="manual-skills-actions">
+                            <button class="btn btn-secondary" id="clear-manual-skills">
+                                <i class="fas fa-eraser"></i> Clear All
+                            </button>
+                            <button class="btn btn-primary" id="save-manual-skills">
+                                <i class="fas fa-save"></i> Save Skills
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="manual-skills-display">
+                        <div class="skills-library">
+                            <div class="library-header">Available Skills</div>
+                            <div class="skills-grid" id="skills-library">
+                                <!-- Skills will be loaded here -->
+                            </div>
+                        </div>
+                        
+                        <div class="selected-skills">
+                            <div class="selected-skills-header">Selected Skills</div>
+                            <div id="selected-skills-list" class="selected-skills-list">
+                                <!-- Selected skills will be shown here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 SkillVista. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Manual Skills Modal -->
+    <div id="manual-skills-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Skills Manually</h3>
+                <button class="close-modal" id="close-manual-skills-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="skills-library">
+                    <div class="library-header">Available Skills</div>
+                    <div class="skills-grid" id="modal-skills-library">
+                        <!-- Skills will be loaded here -->
+                    </div>
+                </div>
+                <div class="selected-skills">
+                    <div class="selected-skills-header">Selected Skills</div>
+                    <div id="modal-selected-skills" class="selected-skills-list">
+                        <!-- Selected skills will be shown here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="modal-clear-skills">Clear All</button>
+                <button class="btn btn-primary" id="modal-save-skills">Save Skills</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/resume-manager.js"></script>
+</body>
+</html>
