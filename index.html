@@ -3,538 +3,983 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - SkillVista</title>
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="assets/css/learning.css">
-    <link rel="stylesheet" href="assets/css/practice-arena.css">
-    <link rel="stylesheet" href="assets/css/performance-analytics.css">
-    <link rel="stylesheet" href="assets/css/job-vacancies.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>SkillVista - Bridge the gap between college and career</title>
     <style>
-        /* Dashboard Specific Styles */
+        /* CSS Variables */
+        :root {
+            --primary-color: #00bcd4; /* Teal theme */
+            --primary-gradient: linear-gradient(135deg, #00bcd4, #2196f3);
+            --secondary-color: #6c757d;
+            --text-dark: #212529;
+            --text-light: #6c757d;
+            --bg-light: #f8f9fa;
+            --card-bg: #ffffff;
+            --border-color: #e9ecef;
+            --shadow-sm: 0 2px 10px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.12);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --transition: all 0.3s ease;
+        }
+
+        /* Reset & Base Styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            background-color: #ffffff; /* White background for cleaner dashboard look */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background-color: var(--bg-light);
         }
 
-        /* Resume Analysis Styles */
-        .resume-status-section {
-            margin-top: 30px;
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
         }
 
-        .resume-status-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-            border: 1px solid #e9ecef;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
         }
 
-        .resume-status-header {
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            border: none;
+            cursor: pointer;
+            transition: var(--transition);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 188, 212, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-large {
+            padding: 16px 32px;
+            font-size: 1.1rem;
+        }
+
+        /* Utility Classes */
+        .text-center { text-align: center; }
+        .text-left { text-align: left; }
+        .text-right { text-align: right; }
+        .mb-2 { margin-bottom: 16px; }
+        .mb-3 { margin-bottom: 24px; }
+        .mb-4 { margin-bottom: 32px; }
+        .mt-2 { margin-top: 16px; }
+        .mt-3 { margin-top: 24px; }
+        .mt-4 { margin-top: 32px; }
+        .section-padding { padding: 80px 0; }
+        .section-alt { background: #ffffff; }
+        .gradient-text {
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Header & Navigation */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: var(--card-bg);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e9ecef;
-            padding-bottom: 15px;
+            padding: 16px 0;
+            transition: var(--transition);
         }
 
-        .resume-status-header h3 {
-            margin: 0;
-            color: var(--text-color);
-            font-size: 1.2rem;
-        }
-
-        .resume-status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .resume-status-badge.not-uploaded {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .resume-status-badge.analyzed {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .resume-status-badge.processing {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        .resume-status-content {
-            margin-top: 15px;
-        }
-
-        .resume-status-message {
-            color: var(--secondary-color);
-            font-size: 0.95rem;
-            margin: 0;
-        }
-
-        /* Analysis Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        /* Searchable Dropdown Styles */
-        .searchable-dropdown {
-            position: relative;
-            width: 100%;
-        }
-
-        .searchable-dropdown input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 1rem;
-            background-color: white;
-            transition: border-color 0.2s ease;
-            box-sizing: border-box;
-        }
-
-        .searchable-dropdown input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, white);
-        }
-
-        .dropdown-results {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ced4da;
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            display: none;
-        }
-
-        .dropdown-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f3f4;
-            font-size: 0.95rem;
-            color: var(--text-color);
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-item.selected {
-            background-color: color-mix(in srgb, var(--primary-color) 10%, white);
-            color: var(--primary-color);
-        }
-
-        .dropdown-item .role-category {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-left: 10px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        /* Analysis Results Styles */
-        .analysis-score {
+        .logo {
             display: flex;
             align-items: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--text-dark);
         }
 
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #007bff, #28a745);
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-gradient);
+            border-radius: 8px;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             color: white;
+            font-size: 1.2rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            font-weight: 600;
+            color: var(--text-dark);
             position: relative;
         }
 
-        .score-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 5px;
+        .nav-links a:hover {
+            color: var(--primary-color);
         }
 
-        .score-label {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.9;
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-gradient);
+            transition: var(--transition);
         }
 
-        .score-details {
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .auth-buttons {
             display: flex;
-            flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
-        .level-badge {
+        /* Mobile Menu */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-dark);
+        }
+
+        /* Main Sections */
+        .hero {
+            padding: 120px 0 80px;
+            background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .badge {
+            display: inline-block;
             padding: 8px 16px;
+            background: rgba(0, 188, 212, 0.1);
+            color: var(--primary-color);
             border-radius: 20px;
             font-size: 0.9rem;
             font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-            width: fit-content;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0, 188, 212, 0.3);
         }
 
-        .level-badge.beginner {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            font-weight: 800;
         }
 
-        .level-badge.intermediate {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .level-badge.advanced {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .target-role-display {
-            font-size: 0.9rem;
-            color: #6c757d;
-            font-weight: 600;
-        }
-
-        .skills-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .skills-group {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e9ecef;
-        }
-
-        .skills-group h4 {
-            margin: 0 0 15px 0;
-            color: #212529;
-            font-size: 1.1rem;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 10px;
-        }
-
-        .skills-list {
+        .hero-buttons {
             display: flex;
+            gap: 16px;
+            justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
         }
 
-        .skill-badge {
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            display: inline-flex;
+        .trust-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
             align-items: center;
             gap: 8px;
-        }
-
-        .skill-badge.matched {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .skill-badge.missing {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* Validation Error Styles */
-        .role-validation-error {
-            color: #dc3545;
+            color: var(--text-light);
             font-size: 0.9rem;
-            margin-top: 5px;
+        }
+
+        /* Dashboard Preview */
+        .dashboard-preview {
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            padding: 40px;
+            box-shadow: var(--shadow-md);
+            margin: -40px auto 0;
+            max-width: 800px;
+            position: relative;
+            z-index: 10;
+            border: 1px solid var(--border-color);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-light);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-light);
             font-weight: 600;
         }
 
-        .role-selection-feedback {
-            color: #28a745;
-            font-size: 0.9rem;
-            margin-top: 5px;
+        /* Features Section */
+        .features {
+            background: var(--card-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .section-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 188, 212, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        .feature-desc {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats-section {
+            background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+        }
+
+        .stats-grid-4 {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .stat-box {
+            background: var(--card-bg);
+            padding: 32px;
+            border-radius: var(--radius-md);
+            text-align: center;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .stat-text {
+            font-size: 1rem;
+            color: var(--text-light);
             font-weight: 600;
         }
 
-        /* Notification Styles */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+        /* How It Works */
+        .how-it-works {
+            background: var(--card-bg);
+        }
+
+        .steps-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .steps-container::before {
+            content: '';
+            position: absolute;
+            left: 30px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--border-color);
+            z-index: 0;
+        }
+
+        .step {
+            position: relative;
+            padding-left: 80px;
+            margin-bottom: 40px;
+            z-index: 1;
+        }
+
+        .step:last-child {
+            margin-bottom: 0;
+        }
+
+        .step-number {
+            position: absolute;
+            left: -34px;
+            top: 0;
+            width: 48px;
+            height: 48px;
+            background: var(--primary-gradient);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 15px rgba(0, 188, 212, 0.3);
+        }
+
+        .step-content {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .step-content:hover {
+            transform: translateX(8px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .step-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .step-desc {
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: linear-gradient(135deg, #00bcd4, #2196f3);
+            color: white;
+            text-align: center;
+            padding: 80px 0;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+        }
+
+        .cta-subtitle {
+            font-size: 1.1rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-cta {
             background: white;
-            border: 1px solid #dee2e6;
-            border-left: 4px solid #28a745;
-            padding: 15px 20px;
-            border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
+            color: var(--primary-color);
+            font-weight: 800;
+            padding: 16px 40px;
+            font-size: 1.1rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
         }
 
-        .notification.notification-success {
-            border-left-color: #28a745;
+        .btn-cta:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
         }
 
-        .notification.notification-error {
-            border-left-color: #dc3545;
+        /* Footer */
+        footer {
+            background: var(--text-dark);
+            color: #adb5bd;
+            padding: 60px 0 20px;
         }
 
-        .notification.notification-info {
-            border-left-color: #17a2b8;
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
         }
 
-        .notification.fade-out {
-            transform: translateX(0);
-            opacity: 0;
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .footer-desc {
+            color: #adb5bd;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .footer-links h4 {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 8px;
+        }
+
+        .footer-links a {
+            color: #adb5bd;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #495057;
+            padding-top: 20px;
+            text-align: center;
+            color: #adb5bd;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .stats-grid-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background: var(--card-bg);
+                flex-direction: column;
+                align-items: center;
+                padding: 40px 0;
+                transition: var(--transition);
+                box-shadow: var(--shadow-md);
+            }
+
+            .nav-links.active {
+                left: 0;
+            }
+
+            .auth-buttons {
+                flex-direction: column;
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .stats-grid, .stats-grid-4 {
+                grid-template-columns: 1fr;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .step {
+                padding-left: 60px;
+            }
+
+            .step-number {
+                left: -34px;
+            }
+
+            .steps-container::before {
+                left: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .cta-title {
+                font-size: 2rem;
+            }
+
+            .dashboard-preview {
+                padding: 24px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="dashboard-layout">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <a href="index.html" class="logo">SkillVista</a>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li><a href="index.html" class="active">Dashboard</a></li>
-                    <li><a href="resume.html">Resume & Skills</a></li>
-                    <li><a href="analysis.html">Skill Analysis</a></li>
-                    <li><a href="vacancies.html">Vacancy</a></li>
-                    <li><a href="learning.html">Courses & Learning</a></li>
-                    <li><a href="practice.html">Practice Arena</a></li>
-                    <li><a href="analytics.html">Analytics</a></li>
-                    <li><a href="credits.html">Credits</a></li>
-                    <li><a href="settings.html">Profile Settings</a></li>
-                    <li><a href="index.html">Logout</a></li>
-                </ul>
-            </nav>
-        </aside>
+    <!-- Header -->
+    <header>
+        <nav class="navbar container">
+            <a href="#" class="logo">
+                <div class="logo-icon">SV</div>
+                SkillVista
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-it-works">How it Works</a></li>
+                <li><a href="#pricing">Pricing</a></li>
+            </ul>
 
-        <!-- Main Content -->
-        <main class="main-content" aria-label="Student dashboard overview">
-            <header class="dashboard-header">
-                <h1>Welcome Back, Student!</h1>
-            </header>
-
-            <div class="cards-grid" aria-label="Progress summary cards">
-                <!-- Readiness Score Card -->
-                <article class="dashboard-card" aria-label="Readiness score">
-                    <p class="card-label">Readiness Score</p>
-                    <p class="card-value">78%</p>
-                    <p class="card-subtext">Target: 90%</p>
-                </article>
-
-                <!-- Skills Completed Card -->
-                <article class="dashboard-card" aria-label="Skills completed">
-                    <p class="card-label">Skills Completed</p>
-                    <p class="card-value">14 / 25</p>
-                    <p class="card-subtext">Next: Advanced CSS</p>
-                </article>
-
-                <!-- Credits Earned Card -->
-                <article class="dashboard-card" aria-label="Credits earned">
-                    <p class="card-label">Credits Earned</p>
-                    <p class="card-value">320</p>
-                    <p class="card-subtext">Need 500 for Certification</p>
-                </article>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn btn-secondary">Log In</a>
+                <a href="login.html" class="btn btn-primary">Get Started</a>
             </div>
 
-            <!-- Resume Upload Status Indicator -->
-            <section class="resume-status-section" aria-label="Resume upload status">
-                <div class="resume-status-card">
-                    <div class="resume-status-header">
-                        <h3>Resume Status</h3>
-                        <span class="resume-status-badge" id="resume-status-badge">Not uploaded</span>
-                    </div>
-                    <div class="resume-status-content" id="resume-status-content">
-                        <p class="resume-status-message">No resume uploaded yet.</p>
-                    </div>
-                </div>
-            </section>
+            <button class="menu-toggle" id="menuToggle">☰</button>
+        </nav>
+    </header>
 
-            <!-- Resume Analysis Section -->
-            <section class="resume-status-section" aria-label="Resume analysis">
-                <div class="resume-status-card">
-                    <div class="resume-status-header">
-                        <h3>Resume Analysis</h3>
-                        <span class="resume-status-badge not-uploaded" id="resume-analysis-badge">
-                            Not analyzed
-                        </span>
-                    </div>
-                    <div class="resume-status-content" id="resume-analysis-content">
-                        <div id="analysis-form-container" style="display: none;">
-                            <div class="form-group">
-                                <label for="target-role-search">Search or Select Target Role</label>
-                                <div class="searchable-dropdown">
-                                    <input 
-                                        type="text" 
-                                        id="target-role-search" 
-                                        name="target-role-search"
-                                        placeholder="Search or select your target job role"
-                                        autocomplete="on"
-                                    />
-                                    <div class="dropdown-results" id="role-search-results" style="display: none;"></div>
-                                    <input type="hidden" id="target-role" name="target-role">
-                                </div>
-                            </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-primary" id="analyze-resume-btn">
-                                    Analyze Resume
-                                </button>
-                            </div>
-                        </div>
-                        
-                        <div id="analysis-results-container" style="display: none;">
-                            <div class="analysis-score">
-                                <div class="score-circle">
-                                    <div class="score-value" id="resume-score">0%</div>
-                                    <div class="score-label">Resume Score</div>
-                                </div>
-                                <div class="score-details">
-                                    <div class="level-badge" id="resume-level">Beginner</div>
-                                    <div class="target-role-display" id="target-role-display">Target Role: --</div>
-                                </div>
-                            </div>
-                            
-                            <div class="skills-section">
-                                <div class="skills-group">
-                                    <h4>Matched Skills</h4>
-                                    <div class="skills-list" id="matched-skills"></div>
-                                </div>
-                                <div class="skills-group">
-                                    <h4>Missing Skills</h4>
-                                    <div class="skills-list" id="missing-skills"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <p class="resume-status-message" id="analysis-message">
-                            Upload your resume and select a target role to analyze your skills.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- First-time user: Upload Resume call-to-action -->
-            <section id="resume-upload-section"
-                     class="resume-upload-section"
-                     aria-label="Upload your resume"
-                     data-first-time="true">
-                <header class="resume-upload-header">
-                    <h2>Upload Your Resume</h2>
-                    <p>
-                        Share your latest resume so SkillVista can tailor learning paths,
-                        highlight your strengths, and close real skill gaps faster.
-                    </p>
-                </header>
-
-                <!-- This form is front-end only for now -->
-                <form id="resume-upload-form" class="resume-upload-form">
-                    <div class="resume-upload-field">
-                        <label for="resume-file">Resume file (PDF, DOC, DOCX)</label>
-                        <input
-                            type="file"
-                            id="resume-file"
-                            name="resume"
-                            accept=".pdf,.doc,.docx"
-                            required
-                        />
-                    </div>
-
-                    <div class="resume-upload-actions">
-                        <button type="submit" class="btn btn-primary">
-                            Upload Resume
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="resume-skip-btn">
-                            Skip for now
-                        </button>
-                    </div>
-
-                    <!-- Placeholder for future backend/analysis feedback -->
-                    <p class="resume-upload-note">
-                        You can always upload your resume later from your profile settings.
-                    </p>
-                </form>
-            </section>
-
-            <!-- Placeholder for main content/charts -->
-            <section class="main-dashboard-area" aria-label="Next learning steps">
-                <h2>Your Next Steps</h2>
-                <div class="main-dashboard-card">
-                    <p>Placeholder for personalized learning roadmap or current assignment.</p>
-                </div>
-            </section>
-        </main>
-    </div>
-
-    <footer class="main-footer">
+    <!-- Hero Section -->
+    <section class="hero">
         <div class="container">
-            <p>&copy; 2024 SkillVista. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
+            <div class="hero-content">
+                <span class="badge">Bridge the gap between college and career</span>
+                <h1>Master the skills <span class="gradient-text">industry demands</span></h1>
+                <p>Get personalized skill gap analysis, curated learning paths, and hands-on practice to become industry-ready.</p>
+                
+                <div class="hero-buttons">
+                    <a href="login.html" class="btn btn-primary btn-large">Start Free Analysis</a>
+                    <a href="#" class="btn btn-secondary">Watch Demo</a>
+                </div>
+
+                <div class="trust-indicators">
+                    <div class="trust-item">✓ Free skill analysis</div>
+                    <div class="trust-item">✓ 1000+ practice problems</div>
+                    <div class="trust-item">✓ Industry-aligned curriculum</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Preview -->
+        <div class="container">
+            <div class="dashboard-preview">
+                <h3 style="text-align: center; margin-bottom: 20px; color: var(--text-dark);">Your Progress Dashboard</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-value">78%</span>
+                        <div class="stat-label">Skill Readiness</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">2,450</span>
+                        <div class="stat-label">Credits Earned</div>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-value">147</span>
+                        <div class="stat-label">Problems Solved</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features section-padding" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Everything you need to level up</h2>
+                <p class="section-subtitle">Comprehensive platform designed to bridge the gap between academic knowledge and industry requirements</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3 class="feature-title">Smart Skill Analysis</h3>
+                    <p class="feature-desc">Upload your resume and get AI-powered skill gap analysis tailored to your target job role.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3 class="feature-title">Curated Learning Paths</h3>
+                    <p class="feature-desc">Personalized learning paths based on industry requirements and your current skill level.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">💻</div>
+                    <h3 class="feature-title">Integrated Practice</h3>
+                    <p class="feature-desc">Hands-on coding challenges and real-world problems to apply what you learn.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3 class="feature-title">Credit System</h3>
+                    <p class="feature-desc">Earn credits for completing tasks and track your progress through gamification.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📈</div>
+                    <h3 class="feature-title">Performance Analytics</h3>
+                    <p class="feature-desc">Detailed analytics to track your improvement and identify areas for growth.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <h3 class="feature-title">Personalized Recommendations</h3>
+                    <p class="feature-desc">AI-driven recommendations for courses, problems, and learning resources.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section section-padding">
+        <div class="container">
+            <div class="stats-grid-4">
+                <div class="stat-box">
+                    <span class="stat-number">50+</span>
+                    <div class="stat-text">Job Roles</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">500+</span>
+                    <div class="stat-text">Learning Resources</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">1000+</span>
+                    <div class="stat-text">Practice Problems</div>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-number">10K+</span>
+                    <div class="stat-text">Students Helped</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works section-padding" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How SkillVista Works</h2>
+                <p class="section-subtitle">Simple 5-step process to bridge your skill gaps and become industry-ready</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">01</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Upload Resume</h3>
+                        <p class="step-desc">Start by uploading your resume. Our AI analyzes your skills, experience, and education to understand your current profile.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">02</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Select Target Role</h3>
+                        <p class="step-desc">Choose your desired job role from our extensive database of industry positions and requirements.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">03</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Get Personalized Learning</h3>
+                        <p class="step-desc">Receive a detailed skill gap analysis and personalized learning path tailored to your target role.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">04</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Practice & Solve</h3>
+                        <p class="step-desc">Work through curated problems and exercises designed to build the skills you need.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">05</div>
+                    <div class="step-content">
+                        <h3 class="step-title">Track & Improve</h3>
+                        <p class="step-desc">Monitor your progress through detailed analytics and adjust your learning as needed.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" id="pricing">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to become industry-ready?</h2>
+                <p class="cta-subtitle">Join thousands of students who have successfully bridged their skill gaps and landed their dream jobs.</p>
+                
+                <div class="cta-buttons">
+                    <a href="login.html" class="btn btn-cta">Get Started Free</a>
+                    <a href="#" class="btn btn-secondary" style="background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.3);">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <div class="footer-logo">
+                        <div class="logo-icon">SV</div>
+                        SkillVista
+                    </div>
+                    <p class="footer-desc">Empowering students to bridge the gap between academic knowledge and industry requirements through personalized skill analysis and learning paths.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How it Works</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                        <li><a href="#">Demo</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                        <li><a href="#">GDPR Compliance</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 SkillVista. All rights reserved.</p>
             </div>
         </div>
     </footer>
 
-    <!-- Chart.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script src="assets/js/job-roles.js"></script>
-    <script src="assets/js/job-role-autocomplete.js"></script>
-    <script src="assets/js/skill-analysis.js"></script>
-    <script src="assets/js/script.js"></script>
+    <!-- Mobile Menu Script -->
+    <script>
+        const menuToggle = document.getElementById('menuToggle');
+        const navLinks = document.querySelector('.nav-links');
+
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            menuToggle.textContent = navLinks.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // Close menu when clicking on a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuToggle.textContent = '☰';
+            });
+        });
+    </script>
 </body>
 </html>
