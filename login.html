@@ -117,7 +117,16 @@
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
-
+<script>
+document.getElementById("login-form").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent actual form submission
+    
+    // Optional: you can validate inputs here
+    
+    // Redirect to dashboard
+    window.location.href = "dashboard.html";
+});
+</script>
             <!-- Register Form -->
             <form id="register-form" class="auth-form">
                 <div class="form-group">

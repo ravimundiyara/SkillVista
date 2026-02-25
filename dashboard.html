@@ -4,1187 +4,986 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - SkillVista</title>
-    <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/learning.css">
-    <link rel="stylesheet" href="assets/css/practice-arena.css">
-    <link rel="stylesheet" href="assets/css/performance-analytics.css">
-    <link rel="stylesheet" href="assets/css/job-vacancies.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Dashboard Specific Styles */
-        body {
-            background-color: #ffffff; /* White background for cleaner dashboard look */
+        /* CSS Variables for Theme */
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #64748b;
+            --text-color: #1e293b;
+            --light-text: #f8fafc;
+            --bg-color: #f1f5f9;
+            --card-bg: #ffffff;
+            --sidebar-bg: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+            --border-color: #e2e8f0;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --radius: 12px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .dashboard-layout {
-            display: flex;
-            min-height: calc(100vh - 120px); /* Adjust for header/footer */
-        }
-
-        /* --- Sidebar Styling --- */
-        .sidebar {
-            width: 250px;
-            background-color: var(--text-color);
-            color: white;
-            padding: 20px 0;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar .logo {
-            display: block;
-            text-align: center;
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: white;
-            margin-bottom: 40px;
-            padding: 0 15px;
-        }
-
-        .sidebar-nav ul {
-            list-style: none;
-        }
-
-        .sidebar-nav a {
-            display: block;
-            padding: 12px 25px;
-            color: #adb5bd;
-            font-weight: 500;
-            transition: background-color 0.2s ease, color 0.2s ease;
-        }
-
-        .sidebar-nav a:hover,
-        .sidebar-nav a.active {
-            background-color: color-mix(in srgb, var(--primary-color) 20%, var(--text-color));
-            color: white;
-        }
-
-        /* --- Main Content Styling --- */
-        .main-content {
-            flex-grow: 1;
-            padding: 30px;
-            background-color: var(--background-color);
-        }
-
-        .dashboard-header h1 {
-            font-size: 2rem;
-            color: var(--text-color);
-            margin-bottom: 20px;
-        }
-
-        /* --- Cards Grid --- */
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
-        }
-
-        .dashboard-card {
-            background: var(--card-background);
-            border-radius: 10px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-            border-left: 5px solid var(--primary-color);
-            text-align: center;
-        }
-
-        .card-label {
-            font-size: 1rem;
-            color: var(--secondary-color);
-            margin-bottom: 5px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .card-value {
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .card-subtext {
-            font-size: 0.9rem;
-            color: var(--secondary-color);
-        }
-
-        /* Resume Analysis Styles */
-        .resume-status-section {
-            margin-top: 30px;
-        }
-
-        .resume-status-card {
-            background: white;
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.07);
-            border: 1px solid #e9ecef;
-        }
-
-        .resume-status-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #e9ecef;
-            padding-bottom: 15px;
-        }
-
-        .resume-status-header h3 {
-            margin: 0;
-            color: var(--text-color);
-            font-size: 1.2rem;
-        }
-
-        .resume-status-badge {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .resume-status-badge.not-uploaded {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .resume-status-badge.analyzed {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .resume-status-badge.processing {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-
-        .resume-status-content {
-            margin-top: 15px;
-        }
-
-        .resume-status-message {
-            color: var(--secondary-color);
-            font-size: 0.95rem;
-            margin: 0;
-        }
-
-        /* Analysis Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        /* Searchable Dropdown Styles */
-        .searchable-dropdown {
-            position: relative;
-            width: 100%;
-        }
-
-        .searchable-dropdown input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ced4da;
-            border-radius: 6px;
-            font-size: 1rem;
-            background-color: white;
-            transition: border-color 0.2s ease;
+        /* Reset and Base Styles */
+        * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        .searchable-dropdown input[type="text"]:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color) 20%, white);
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
         }
 
-        .dropdown-results {
-            position: absolute;
-            top: 100%;
+        /* Layout */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar-bg);
+            color: var(--light-text);
+            padding: 24px 0;
+            position: fixed;
             left: 0;
-            right: 0;
-            background: white;
-            border: 1px solid #ced4da;
-            border-top: none;
-            border-radius: 0 0 6px 6px;
-            max-height: 200px;
-            overflow-y: auto;
-            z-index: 1000;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            top: 0;
+            bottom: 0;
+            width: 250px;
+            z-index: 50;
+            transition: var(--transition);
+            box-shadow: 2px 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 16px;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .logo.collapsed {
+            justify-content: center;
+            width: 100%;
+        }
+
+        .logo-text {
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .logo-text {
             display: none;
         }
 
-        .dropdown-item {
-            padding: 12px 15px;
-            cursor: pointer;
-            border-bottom: 1px solid #f1f3f4;
-            font-size: 0.95rem;
-            color: var(--text-color);
-        }
-
-        .dropdown-item:hover {
-            background-color: #f8f9fa;
-        }
-
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
-
-        .dropdown-item.selected {
-            background-color: color-mix(in srgb, var(--primary-color) 10%, white);
-            color: var(--primary-color);
-        }
-
-        .dropdown-item .role-category {
-            font-size: 0.8rem;
-            color: #6c757d;
-            margin-left: 10px;
-        }
-
-        .form-actions {
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--light-text);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        /* Analysis Results Styles */
-        .analysis-score {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-            margin-bottom: 30px;
-            padding: 20px;
-            background-color: #f8f9fa;
-            border-radius: 12px;
-            border: 1px solid #e9ecef;
-        }
-
-        .score-circle {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #007bff, #28a745);
-            display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            color: white;
+            cursor: pointer;
+            transition: var(--transition);
+            backdrop-filter: blur(10px);
+        }
+
+        .toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
+        }
+
+        .sidebar-nav {
+            padding: 0 8px;
+        }
+
+        .nav-item {
+            margin-bottom: 4px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 14px 24px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            border-radius: 10px;
+            transition: var(--transition);
             position: relative;
         }
 
-        .score-value {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 5px;
+        .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            transform: translateX(4px);
         }
 
-        .score-label {
+        .nav-link.active {
+            background: rgba(255, 255, 255, 0.15);
+            color: var(--light-text);
+            font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .nav-link.active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 40%;
+            background: var(--primary-color);
+            border-radius: 0 4px 4px 0;
+        }
+
+        .nav-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-text {
+            transition: var(--transition);
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+
+        .nav-section {
+            margin-top: 24px;
+            padding: 16px 24px;
             font-size: 0.8rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            opacity: 0.9;
-        }
-
-        .score-details {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .level-badge {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            color: rgba(255, 255, 255, 0.6);
             font-weight: 700;
-            text-transform: uppercase;
-            display: inline-block;
-            width: fit-content;
         }
 
-        .level-badge.beginner {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
+        .sidebar-footer {
+            position: absolute;
+            bottom: 24px;
+            left: 0;
+            right: 0;
+            padding: 0 24px;
         }
 
-        .level-badge.intermediate {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+        /* Main Content */
+        .main-content {
+            margin-left: 250px;
+            padding: 32px;
+            transition: var(--transition);
+            width: 100%;
         }
 
-        .level-badge.advanced {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .sidebar.collapsed ~ .main-content {
+            margin-left: 80px;
         }
 
-        .target-role-display {
-            font-size: 0.9rem;
-            color: #6c757d;
-            font-weight: 600;
+        /* Header */
+        .dashboard-header {
+            margin-bottom: 32px;
         }
 
-        .skills-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
-
-        .skills-group {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e9ecef;
-        }
-
-        .skills-group h4 {
-            margin: 0 0 15px 0;
-            color: #212529;
-            font-size: 1.1rem;
-            border-bottom: 2px solid #e9ecef;
-            padding-bottom: 10px;
-        }
-
-        .skills-list {
+        .welcome-section {
             display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
         }
 
-        .skill-badge {
-            padding: 8px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .welcome-subtitle {
+            color: var(--secondary-color);
+            font-size: 1rem;
+        }
+
+        /* Grid Layout */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .left-column {
+            display: grid;
+            gap: 24px;
+        }
+
+        .right-column {
+            display: grid;
+            gap: 24px;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            border: 1px solid var(--border-color);
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Streak Card */
+        .streak-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .streak-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30px, -30px);
+        }
+
+        .streak-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .streak-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .streak-icon {
+            font-size: 2rem;
+        }
+
+        .streak-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+
+        .continue-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
             font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
             display: inline-flex;
             align-items: center;
             gap: 8px;
         }
 
-        .skill-badge.matched {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+        .continue-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
 
-        .skill-badge.missing {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
         }
 
-        /* Validation Error Styles */
-        .role-validation-error {
-            color: #dc3545;
+        .stat-card {
+            text-align: center;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+            font-size: 1.5rem;
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-icon.blue { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+        .stat-icon.green { background: linear-gradient(135deg, #10b981, #059669); }
+        .stat-icon.purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .stat-icon.orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-color);
+            margin-bottom: 8px;
+        }
+
+        .stat-growth {
             font-size: 0.9rem;
-            margin-top: 5px;
+            color: var(--success-color);
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
         }
 
-        .role-selection-feedback {
-            color: #28a745;
+        .stat-growth::before {
+            content: '▲';
+            font-size: 0.8rem;
+        }
+
+        /* Activity Section */
+        .activity-card {
+            min-height: 300px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-color);
+        }
+
+        .view-all-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
             font-size: 0.9rem;
-            margin-top: 5px;
+        }
+
+        .view-all-link:hover {
+            text-decoration: underline;
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            border-radius: 10px;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .activity-item:hover {
+            background: var(--bg-color);
+            border-color: var(--border-color);
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: white;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-title {
             font-weight: 600;
+            margin-bottom: 4px;
         }
 
-        /* Notification Styles */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: white;
-            border: 1px solid #dee2e6;
-            border-left: 4px solid #28a745;
-            padding: 15px 20px;
-            border-radius: 6px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            z-index: 9999;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
+        .activity-time {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
         }
 
-        .notification.notification-success {
-            border-left-color: #28a745;
+        .activity-points {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--success-color);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.8rem;
         }
 
-        .notification.notification-error {
-            border-left-color: #dc3545;
+        /* Priority Skills */
+        .priority-card {
+            min-height: 300px;
         }
 
-        .notification.notification-info {
-            border-left-color: #17a2b8;
+        .skill-item {
+            margin-bottom: 20px;
         }
 
-        .notification.fade-out {
-            transform: translateX(0);
-            opacity: 0;
+        .skill-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .skill-name {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .skill-level {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: var(--bg-color);
+        }
+
+        .skill-level.high { color: var(--danger-color); background: rgba(239, 68, 68, 0.1); }
+        .skill-level.medium { color: var(--warning-color); background: rgba(245, 158, 11, 0.1); }
+        .skill-level.low { color: var(--success-color); background: rgba(16, 185, 129, 0.1); }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-color);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), #3b82f6);
+            width: 0%;
+            transition: width 1.5s ease-in-out;
+            border-radius: 4px;
+        }
+
+        .start-learning-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #2563eb, #3b82f6);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .start-learning-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: fixed;
+                left: -250px;
+                top: 0;
+                bottom: 0;
+                z-index: 100;
+                transition: left 0.3s ease;
+            }
+            
+            .sidebar.mobile-open {
+                left: 0;
+            }
+            
+            .sidebar.collapsed {
+                width: 250px;
+            }
+            
+            .sidebar.collapsed .nav-text {
+                display: block;
+            }
+            
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+            
+            .welcome-section {
+                flex-direction: column;
+                gap: 12px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .hamburger-btn {
+                display: block;
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 60;
+                background: var(--card-bg);
+                border: 1px solid var(--border-color);
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                box-shadow: var(--shadow);
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 50;
+                backdrop-filter: blur(2px);
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .welcome-title {
+                font-size: 1.5rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .streak-title {
+                font-size: 1.2rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Hamburger Button for Mobile -->
+    <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle sidebar">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Mobile Overlay -->
+    <div class="overlay" id="overlay"></div>
+
     <div class="dashboard-layout">
         <!-- Sidebar -->
-        <aside class="sidebar">
-            <a href="index.html" class="logo">SkillVista</a>
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo" id="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span class="logo-text">SkillVista</span>
+                </div>
+                <button class="toggle-btn" id="toggle-btn" aria-label="Toggle sidebar">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
             <nav class="sidebar-nav">
-                <ul>
-                     <li><a href=".html">Dashboard</a></li>
-                    <li><a href="resume.html">Resume & Skills</a></li>
-                    <li><a href="analysis.html">Skill Analysis</a></li>
-                    <li><a href="vacancies.html">Vacancy</a></li>
-                    <li><a href="learning.html">Courses & Learning</a></li>
-                    <li><a href="practice.html">Practice Arena</a></li>
-                    <li><a href="analytics.html" class="active">Analytics</a></li>
-                    <li><a href="credits.html">Credits</a></li>
-                    <li><a href="settings.html">Profile Settings</a></li>
-                    <li><a href="index.html">Logout</a></li>
-                </ul>
+                <div class="nav-item">
+                    <a href="dashboard.html" class="nav-link active">
+                        <i class="fas fa-tachometer-alt nav-icon"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="resume-manager.html" class="nav-link">
+                        <i class="fas fa-file-alt nav-icon"></i>
+                        <span class="nav-text">Resume & Skills</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="skill-analysis.html" class="nav-link">
+                        <i class="fas fa-chart-line nav-icon"></i>
+                        <span class="nav-text">Skill Analysis</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="vacancies.html" class="nav-link">
+                        <i class="fas fa-briefcase nav-icon"></i>
+                        <span class="nav-text">Vacancies</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="learning.html" class="nav-link">
+                        <i class="fas fa-book nav-icon"></i>
+                        <span class="nav-text">Learning</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="practice.html" class="nav-link">
+                        <i class="fas fa-dumbbell nav-icon"></i>
+                        <span class="nav-text">Practice</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="analytics.html" class="nav-link">
+                        <i class="fas fa-chart-bar nav-icon"></i>
+                        <span class="nav-text">Analytics</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="credits.html" class="nav-link">
+                        <i class="fas fa-coins nav-icon"></i>
+                        <span class="nav-text">Credits</span>
+                    </a>
+                </div>
             </nav>
+
+            <div class="nav-section">Account</div>
+
+            <div class="sidebar-footer">
+                <div class="nav-item">
+                    <a href="settings.html" class="nav-link">
+                        <i class="fas fa-cog nav-icon"></i>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="login.html" class="nav-link" id="sign-out-btn">
+                        <i class="fas fa-sign-out-alt nav-icon"></i>
+                        <span class="nav-text">Sign Out</span>
+                    </a>
+                </div>
+            </div>
         </aside>
 
         <!-- Main Content -->
-        <main class="main-content" aria-label="Student dashboard overview">gv
-            <header class="dashboard-header">
-                <h1>Welcome Back, Student!</h1>
-            </header>
-
-            <div class="cards-grid" aria-label="Progress summary cards">
-                <!-- Readiness Score Card -->
-                <article class="dashboard-card" aria-label="Readiness score">
-                    <p class="card-label">Readiness Score</p>
-                    <p class="card-value">78%</p>
-                    <p class="card-subtext">Target: 90%</p>
-                </article>
-
-                <!-- Skills Completed Card -->
-                <article class="dashboard-card" aria-label="Skills completed">
-                    <p class="card-label">Skills Completed</p>
-                    <p class="card-value">14 / 25</p>
-                    <p class="card-subtext">Next: Advanced CSS</p>
-                </article>
-
-                <!-- Credits Earned Card -->
-                <article class="dashboard-card" aria-label="Credits earned">
-                    <p class="card-label">Credits Earned</p>
-                    <p class="card-value">320</p>
-                    <p class="card-subtext">Need 500 for Certification</p>
-                </article>
-            </div>
-
-            <!-- Resume Upload Status Indicator -->
-            <section class="resume-status-section" aria-label="Resume upload status">
-                <div class="resume-status-card">
-                    <div class="resume-status-header">
-                        <h3>Resume Status</h3>
-                        <span class="resume-status-badge" id="resume-status-badge">Not uploaded</span>
-                    </div>
-                    <div class="resume-status-content" id="resume-status-content">
-                        <p class="resume-status-message">No resume uploaded yet.</p>
-                    </div>
-                </div>
-            </section>
-
-    <!-- Manual Skills Section -->
-    <section class="manual-skills-section" aria-label="Manual skill input">
-        <div class="resume-status-card">
-            <div class="resume-status-header">
-                <h3><i class="fas fa-plus-circle"></i> Manual Skill Input</h3>
-                <p>Add skills that may not be in your resume</p>
-            </div>
-            <div class="resume-status-content">
-                <div class="skills-actions">
-                    <button id="add-skills-btn" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add / Update Skills Manually
-                    </button>
-                    <div class="skills-count" id="skills-count">
-                        0 skills added
-                    </div>
-                </div>
-                <div id="manual-skills-section" class="manual-skills-display">
-                    <p class="no-manual-skills">No manual skills added yet.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Manual Skills Modal -->
-    <div id="manual-skills-modal" class="manual-skills-modal">
-        <div class="manual-skills-modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-plus-circle"></i> Add Skills Manually</h3>
-                <button type="button" class="close-manual-skills-modal" id="close-manual-skills-modal" aria-label="Close">
-                    &times;
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="skill-library">
-                    <div class="searchable-dropdown">
-                        <input type="text" id="skill-search" placeholder="Search skills...">
-                        <div class="dropdown-results" id="skill-search-results"></div>
-                    </div>
-                    <div id="skill-library" class="skills-container">
-                        <!-- Skills will be loaded here -->
-                    </div>
-                </div>
-                <div class="selected-skills-panel">
-                    <h4 class="selected-skills-header">Selected Skills</h4>
-                    <div id="selected-skills" class="selected-skills-list">
-                        <!-- Selected skills will be shown here -->
+        <main class="main-content">
+            <!-- Welcome Header -->
+            <div class="dashboard-header">
+                <div class="welcome-section">
+                    <div>
+                        <h1 class="welcome-title">Welcome back, Alex! 👋</h1>
+                        <p class="welcome-subtitle">You're targeting Full Stack Developer role. Keep up the great progress!</p>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" id="clear-manual-skills">
-                    Clear All
-                </button>
-                <button type="button" class="btn btn-primary" id="save-manual-skills">
-                    Save Skills
-                </button>
-            </div>
-        </div>
-    </div>
 
-            <!-- Resume Analysis Section -->
-            <section class="resume-status-section" aria-label="Resume analysis">
-                <div class="resume-status-card">
-                    <div class="resume-status-header">
-                        <h3>Resume Analysis</h3>
-                        <span class="resume-status-badge not-uploaded" id="resume-analysis-badge">
-                            Not analyzed
-                        </span>
-                    </div>
-                    <div class="resume-status-content" id="resume-analysis-content">
-                        <div id="analysis-form-container" style="display: none;">
-                            <div class="form-group">
-                                <label for="target-role-search">Search or Select Target Role</label>
-                                <div class="searchable-dropdown">
-                                    <input 
-                                        type="text" 
-                                        id="target-role-search" 
-                                        name="target-role-search"
-                                        placeholder="Search or select your target job role"
-                                        autocomplete="on"
-                                    />
-                                    <div class="dropdown-results" id="role-search-results" style="display: none;"></div>
-                                    <input type="hidden" id="target-role" name="target-role">
-                                </div>
+            <!-- Dashboard Grid -->
+            <div class="dashboard-grid">
+                <!-- Left Column -->
+                <div class="left-column">
+                    <!-- 7 Day Streak Card -->
+                    <div class="card streak-card">
+                        <div class="streak-content">
+                            <div class="streak-title">
+                                <i class="fas fa-fire streak-icon"></i>
+                                7 Day Streak!
                             </div>
-                            <div class="form-actions">
-                                <button type="button" class="btn btn-primary" id="analyze-resume-btn">
-                                    Analyze Resume
-                                </button>
+                            <p class="streak-subtitle">You've been consistently learning for 7 days. Your dedication is paying off!</p>
+                            <a href="learning.html" class="continue-btn">
+                                Continue Learning →
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-grid">
+                        <div class="card stat-card">
+                            <div class="stat-icon blue">
+                                <i class="fas fa-percentage"></i>
                             </div>
+                            <div class="stat-title">Skill Readiness</div>
+                            <div class="stat-value">78%</div>
+                            <div class="stat-growth">+5%</div>
                         </div>
                         
-                        <div id="analysis-results-container" style="display: none;">
-                            <div class="analysis-score">
-                                <div class="score-circle">
-                                    <div class="score-value" id="resume-score">0%</div>
-                                    <div class="score-label">Resume Score</div>
+                        <div class="card stat-card">
+                            <div class="stat-icon green">
+                                <i class="fas fa-coins"></i>
+                            </div>
+                            <div class="stat-title">Credits Earned</div>
+                            <div class="stat-value">2,450</div>
+                            <div class="stat-growth">+120</div>
+                        </div>
+                        
+                        <div class="card stat-card">
+                            <div class="stat-icon purple">
+                                <i class="fas fa-laptop-code"></i>
+                            </div>
+                            <div class="stat-title">Skills Learned</div>
+                            <div class="stat-value">12/18</div>
+                            <div class="stat-growth">2 in progress</div>
+                        </div>
+                        
+                        <div class="card stat-card">
+                            <div class="stat-icon orange">
+                                <i class="fas fa-puzzle-piece"></i>
+                            </div>
+                            <div class="stat-title">Problems Solved</div>
+                            <div class="stat-value">147</div>
+                            <div class="stat-growth">+8 today</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Activity -->
+                    <div class="card activity-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Activity</h2>
+                            <a href="#" class="view-all-link">View all</a>
+                        </div>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-code"></i>
                                 </div>
-                                <div class="score-details">
-                                    <div class="level-badge" id="resume-level">Beginner</div>
-                                    <div class="target-role-display" id="target-role-display">Target Role: --</div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Two Sum - Easy</div>
+                                    <div class="activity-time">2 hours ago</div>
+                                </div>
+                                <div class="activity-points">+10</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-book"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">React Hooks Deep Dive</div>
+                                    <div class="activity-time">Yesterday</div>
                                 </div>
                             </div>
                             
-                            <div class="skills-section">
-                                <div class="skills-group">
-                                    <h4>Matched Skills</h4>
-                                    <div class="skills-list" id="matched-skills"></div>
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-code"></i>
                                 </div>
-                                <div class="skills-group">
-                                    <h4>Missing Skills</h4>
-                                    <div class="skills-list" id="missing-skills"></div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Binary Search - Medium</div>
+                                    <div class="activity-time">2 days ago</div>
                                 </div>
+                                <div class="activity-points">+25</div>
+                            </div>
+                            
+                            <div class="activity-item">
+                                <div class="activity-icon">
+                                    <i class="fas fa-code"></i>
+                                </div>
+                                <div class="activity-content">
+                                    <div class="activity-title">Linked List Cycle - Easy</div>
+                                    <div class="activity-time">3 days ago</div>
+                                </div>
+                                <div class="activity-points">+10</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="right-column">
+                    <!-- Priority Skills -->
+                    <div class="card priority-card">
+                        <div class="card-header">
+                            <h2 class="card-title">Priority Skills</h2>
+                            <a href="#" class="view-all-link">View all</a>
+                        </div>
+                        
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">TypeScript</span>
+                                <span class="skill-level high">High</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 45%"></div>
                             </div>
                         </div>
                         
-                        <p class="resume-status-message" id="analysis-message">
-                            Upload your resume and select a target role to analyze your skills.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- First-time user: Upload Resume call-to-action -->
-            <section id="resume-upload-section"
-                     class="resume-upload-section"
-                     aria-label="Upload your resume"
-                     data-first-time="true">
-                <header class="resume-upload-header">
-                    <h2>Upload Your Resume</h2>
-                    <p>
-                        Share your latest resume so SkillVista can tailor learning paths,
-                        highlight your strengths, and close real skill gaps faster.
-                    </p>
-                </header>
-
-                <!-- This form is front-end only for now -->
-                <form id="resume-upload-form" class="resume-upload-form">
-                    <div class="resume-upload-field">
-                        <label for="resume-file">Resume file (PDF, DOC, DOCX)</label>
-                        <input
-                            type="file"
-                            id="resume-file"
-                            name="resume"
-                            accept=".pdf,.doc,.docx"
-                            required
-                        />
-                    </div>
-
-                    <div class="resume-upload-actions">
-                        <button type="submit" class="btn btn-primary">
-                            Upload Resume
-                        </button>
-                        <button type="button" class="btn btn-secondary" id="resume-skip-btn">
-                            Skip for now
-                        </button>
-                    </div>
-
-                    <!-- Placeholder for future backend/analysis feedback -->
-                    <p class="resume-upload-note">
-                        You can always upload your resume later from your profile settings.
-                    </p>
-                </form>
-            </section>
-
-            <!-- Course & Learning Section -->
-            <section class="course-learning-section" aria-label="Course & Learning">
-                <div class="page-header">
-                    <h2>Course & Learning</h2>
-                    <p>Learn from curated YouTube playlists for each technology stack</p>
-                </div>
-
-                <!-- Video Player Section -->
-                <div class="video-player-section">
-                    <div class="video-container">
-                        <div class="video-header">
-                            <h2 id="current-video-title">Select a course to begin learning</h2>
-                            <span class="video-category" id="current-category">No course selected</span>
-                        </div>
-                        <div class="video-wrapper">
-                            <div id="video-placeholder" class="video-placeholder">
-                                <i class="fas fa-play-circle"></i>
-                                <p>Click on any lesson to start watching</p>
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">System Design</span>
+                                <span class="skill-level high">High</span>
                             </div>
-                            <iframe id="youtube-player" 
-                                    class="youtube-iframe" 
-                                    src="" 
-                                    title="YouTube video player" 
-                                    frameborder="0" 
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowfullscreen>
-                            </iframe>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Courses Grid -->
-                <div class="courses-grid" id="courses-grid">
-                    <!-- Courses will be dynamically generated here -->
-                </div>
-            </section>
-
-            <!-- Practice Arena Section -->
-            <section id="practice-arena" class="practice-arena-section" style="display: none;">
-                <div class="practice-header">
-                    <h2>Practice Arena</h2>
-                    <p>Sharpen your skills with curated coding challenges</p>
-                </div>
-
-                <!-- Stats Summary Cards -->
-                <div class="stats-grid" id="stats-grid">
-                    <!-- Stats cards will be dynamically generated here -->
-                </div>
-
-                <!-- Search & Filter Controls -->
-                <div class="controls-section">
-                    <div class="controls-header">
-                        <div class="search-container">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" id="search-input" class="search-input" placeholder="Search problems...">
-                        </div>
-                        <div class="filters-container">
-                            <button class="filter-btn difficulty-filter active" data-difficulty="all">All</button>
-                            <button class="filter-btn difficulty-filter" data-difficulty="easy">Easy</button>
-                            <button class="filter-btn difficulty-filter" data-difficulty="medium">Medium</button>
-                            <button class="filter-btn difficulty-filter" data-difficulty="hard">Hard</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Skill Tags -->
-                    <div class="skill-tags">
-                        <button class="skill-tag active" data-skill="all">All</button>
-                        <button class="skill-tag" data-skill="javascript">JavaScript</button>
-                        <button class="skill-tag" data-skill="typescript">TypeScript</button>
-                        <button class="skill-tag" data-skill="react">React</button>
-                        <button class="skill-tag" data-skill="system design">System Design</button>
-                    </div>
-                </div>
-
-                <!-- Problems Table -->
-                <div class="problems-table">
-                    <div class="table-header">
-                        <div>Status</div>
-                        <div>Problem Name</div>
-                        <div>Skill</div>
-                        <div>Difficulty</div>
-                        <div>Credits</div>
-                    </div>
-                    <div class="table-body">
-                        <!-- Problems will be dynamically generated here -->
-                    </div>
-                </div>
-
-                <!-- Daily Challenge Card -->
-                <div class="daily-challenge-card">
-                    <div class="daily-challenge-header">
-                        <div>
-                            <h3 class="daily-title">Daily Challenge</h3>
-                            <p class="daily-subtitle">Solve today's challenge for 2x credits!</p>
-                        </div>
-                        <div class="timer-container">
-                            <div class="timer-label">Time Remaining</div>
-                            <div id="timer-value" class="timer-value">23:59:59</div>
-                        </div>
-                    </div>
-                    <div class="daily-content">
-                        <div class="challenge-info">
-                            <div class="challenge-name">Binary Tree Maximum Path Sum</div>
-                            <div class="challenge-desc">Find the maximum path sum in a binary tree. A path is defined as any sequence of nodes from some starting node to any node in the tree along the parent-child connections.</div>
-                        </div>
-                        <button id="start-btn" class="start-btn">Start Challenge</button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Performance Analytics Section -->
-            <section class="performance-analytics-section" aria-label="Performance Analytics">
-                <div class="performance-analytics-header">
-                    <h2>Performance Analytics</h2>
-                    <p>Track your progress and identify areas for improvement</p>
-                </div>
-
-                <!-- Top Metric Cards -->
-                <div class="metrics-grid" aria-label="Performance metrics">
-                    <!-- Avg. Accuracy Card -->
-                    <article class="metric-card" aria-label="Average Accuracy">
-                        <i class="fas fa-bullseye metric-icon"></i>
-                        <span class="metric-value">83%</span>
-                        <span class="metric-label">Avg. Accuracy</span>
-                        <span class="metric-indicator">
-                            <i class="fas fa-arrow-up"></i> +5%
-                        </span>
-                    </article>
-
-                    <!-- Problems This Week Card -->
-                    <article class="metric-card" aria-label="Problems This Week">
-                        <i class="fas fa-chart-bar metric-icon"></i>
-                        <span class="metric-value">63</span>
-                        <span class="metric-label">Problems This Week</span>
-                        <span class="metric-indicator">
-                            <i class="fas fa-arrow-up"></i> +12
-                        </span>
-                    </article>
-
-                    <!-- Credits Earned Card -->
-                    <article class="metric-card" aria-label="Credits Earned">
-                        <i class="fas fa-trophy metric-icon"></i>
-                        <span class="metric-value">1,040</span>
-                        <span class="metric-label">Credits Earned</span>
-                        <span class="metric-indicator">
-                            <i class="fas fa-arrow-up"></i> +180
-                        </span>
-                    </article>
-
-                    <!-- Active Days Card -->
-                    <article class="metric-card" aria-label="Active Days">
-                        <i class="fas fa-calendar-alt metric-icon"></i>
-                        <span class="metric-value">7/7</span>
-                        <span class="metric-label">Active Days</span>
-                        <span class="metric-indicator">
-                            <i class="fas fa-star"></i> Streak!
-                        </span>
-                    </article>
-                </div>
-
-                <!-- Analytics Charts Grid -->
-                <div class="analytics-grid" aria-label="Analytics charts">
-                    <!-- Weekly Activity Chart -->
-                    <article class="analytics-card" aria-label="Weekly Activity">
-                        <div class="analytics-card-header">
-                            <div>
-                                <h3 class="analytics-card-title">Weekly Activity</h3>
-                                <p class="analytics-card-subtitle">Problems solved per day</p>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="weeklyActivityChart"></canvas>
-                        </div>
-                    </article>
-
-                    <!-- Readiness Score Trend -->
-                    <article class="analytics-card" aria-label="Readiness Score Trend">
-                        <div class="analytics-card-header">
-                            <div>
-                                <h3 class="analytics-card-title">Readiness Score Trend</h3>
-                                <p class="analytics-card-subtitle">Progress over time</p>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="readinessScoreChart"></canvas>
-                        </div>
-                    </article>
-
-                    <!-- Skill-wise Accuracy -->
-                    <article class="analytics-card" aria-label="Skill-wise Accuracy">
-                        <div class="analytics-card-header">
-                            <div>
-                                <h3 class="analytics-card-title">Skill-wise Accuracy</h3>
-                                <p class="analytics-card-subtitle">Performance by skill</p>
-                            </div>
-                        </div>
-                        <div class="skill-progress-container">
-                            <div class="skill-progress-item">
-                                <div class="skill-progress-header">
-                                    <span>JavaScript</span>
-                                    <span>92%</span>
-                                </div>
-                                <div class="skill-progress-bar">
-                                    <div class="skill-progress-fill strong animate-progress" style="--target-width: 92%"></div>
-                                </div>
-                                <span class="skill-attempts">156 attempts</span>
-                            </div>
-                            
-                            <div class="skill-progress-item">
-                                <div class="skill-progress-header">
-                                    <span>TypeScript</span>
-                                    <span>78%</span>
-                                </div>
-                                <div class="skill-progress-bar">
-                                    <div class="skill-progress-fill good animate-progress" style="--target-width: 78%"></div>
-                                </div>
-                                <span class="skill-attempts">89 attempts</span>
-                            </div>
-                            
-                            <div class="skill-progress-item">
-                                <div class="skill-progress-header">
-                                    <span>React</span>
-                                    <span>85%</span>
-                                </div>
-                                <div class="skill-progress-bar">
-                                    <div class="skill-progress-fill good animate-progress" style="--target-width: 85%"></div>
-                                </div>
-                                <span class="skill-attempts">123 attempts</span>
-                            </div>
-                            
-                            <div class="skill-progress-item">
-                                <div class="skill-progress-header">
-                                    <span>System Design</span>
-                                    <span>65%</span>
-                                </div>
-                                <div class="skill-progress-bar">
-                                    <div class="skill-progress-fill improving animate-progress" style="--target-width: 65%"></div>
-                                </div>
-                                <span class="skill-attempts">45 attempts</span>
-                            </div>
-                            
-                            <div class="skill-progress-item">
-                                <div class="skill-progress-header">
-                                    <span>Git</span>
-                                    <span>95%</span>
-                                </div>
-                                <div class="skill-progress-bar">
-                                    <div class="skill-progress-fill strong animate-progress" style="--target-width: 95%"></div>
-                                </div>
-                                <span class="skill-attempts">67 attempts</span>
-                            </div>
-                        </div>
-                    </article>
-
-                    <!-- Problem Distribution -->
-                    <article class="analytics-card" aria-label="Problem Distribution">
-                        <div class="analytics-card-header">
-                            <div>
-                                <h3 class="analytics-card-title">Problem Distribution</h3>
-                                <p class="analytics-card-subtitle">Difficulty breakdown</p>
-                            </div>
-                        </div>
-                        <div class="chart-container">
-                            <canvas id="problemDistributionChart"></canvas>
-                        </div>
-                        <div class="donut-legend">
-                            <div class="legend-item">
-                                <span class="legend-color" style="background-color: #28a745;"></span>
-                                <span>Easy (65%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background-color: #17a2b8;"></span>
-                                <span>Medium (25%)</span>
-                            </div>
-                            <div class="legend-item">
-                                <span class="legend-color" style="background-color: #ffc107;"></span>
-                                <span>Hard (10%)</span>
-                            </div>
-                        </div>
-                    </article>
-                </div>
-
-                <!-- Insights Section -->
-                <div class="insights-section" aria-label="Performance insights">
-                    <div class="insight-card focus-area">
-                        <h4>Focus Area</h4>
-                        <p>System Design accuracy is your lowest performing skill. Consider focusing on this area to improve your overall readiness score.</p>
-                    </div>
-                    
-                    <div class="insight-card productivity">
-                        <h4>Most Productive Day</h4>
-                        <p>Friday is your most productive day with 15 problems solved. Try to maintain this energy level throughout the week.</p>
-                    </div>
-                    
-                    <div class="insight-card suggestion">
-                        <h4>Improvement Suggestion</h4>
-                        <p>Improve System Design accuracy by practicing Medium & Hard problems. Focus on architectural patterns and scalability concepts.</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Job & Internship Vacancies Section -->
-            <section class="job-vacancies-section" aria-label="Job & Internship Vacancies">
-                <div class="job-vacancies-header">
-                    <h2>Job & Internship Vacancies</h2>
-                    <p>Explore opportunities and match your skills with job requirements</p>
-                </div>
-
-                <!-- Search & Filters Section -->
-                <div class="filters-section">
-                    <div class="filters-grid">
-                        <div class="filter-group">
-                            <label class="filter-label" for="job-search">Search Jobs</label>
-                            <input 
-                                type="text" 
-                                id="job-search" 
-                                class="search-input" 
-                                placeholder="Search by title, company, or skills..."
-                            >
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label" for="category-filter">Category</label>
-                            <select id="category-filter" class="filter-select">
-                                <option value="all">All Categories</option>
-                                <option value="web-development">Web Development</option>
-                                <option value="data-science">Data Science</option>
-                                <option value="ai-ml">AI/ML</option>
-                                <option value="backend-development">Backend Development</option>
-                                <option value="devops">DevOps</option>
-                                <option value="mobile-development">Mobile Development</option>
-                                <option value="cybersecurity">Cybersecurity</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label" for="type-filter">Job Type</label>
-                            <select id="type-filter" class="filter-select">
-                                <option value="all">All Types</option>
-                                <option value="full-time">Full-time</option>
-                                <option value="part-time">Part-time</option>
-                                <option value="internship">Internship</option>
-                                <option value="contract">Contract</option>
-                            </select>
-                        </div>
-                        <div class="filter-group">
-                            <label class="filter-label">&nbsp;</label>
-                            <button class="filter-btn" onclick="resetFilters()">
-                                <i class="fas fa-sync-alt"></i> Reset
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Stats Summary Cards -->
-                <div class="stats-grid" aria-label="Job statistics">
-                    <div class="stat-card">
-                        <i class="fas fa-briefcase stat-icon"></i>
-                        <span class="stat-value" id="total-openings">0</span>
-                        <span class="stat-label">Total Openings</span>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-graduation-cap stat-icon"></i>
-                        <span class="stat-value" id="internships">0</span>
-                        <span class="stat-label">Internships</span>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-star stat-icon"></i>
-                        <span class="stat-value" id="good-matches">0</span>
-                        <span class="stat-label">Good Matches</span>
-                    </div>
-                    <div class="stat-card">
-                        <i class="fas fa-tags stat-icon"></i>
-                        <span class="stat-value" id="your-skills">0</span>
-                        <span class="stat-label">Your Skills</span>
-                    </div>
-                </div>
-
-                <!-- Vacancies Grid -->
-                <div class="vacancies-grid" id="jobs-container" aria-label="Job listings">
-                    <!-- Jobs will be dynamically generated here -->
-                </div>
-            </section>
-
-            <!-- Skill Gap Modal -->
-            <div id="skill-gap-modal" class="skill-gap-modal">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <div>
-                            <h3 class="modal-title" id="modal-job-title">Job Title</h3>
-                            <p class="modal-subtitle" id="modal-company">Company Name</p>
-                        </div>
-                        <button class="close-modal" onclick="closeModal()">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="match-score">
-                            <div class="score-circle">
-                                <span class="score-value" id="score-value">0%</span>
-                                <span class="score-text">Match Score</span>
-                            </div>
-                            <p class="match-details" id="match-details">You have 0 of 0 required skills</p>
-                        </div>
-                        
-                        <div class="skill-section">
-                            <h4 class="skill-section-title">
-                                <i class="fas fa-check-circle" style="color: #28a745;"></i> Matching Skills
-                            </h4>
-                            <div class="skill-list" id="matching-skills">
-                                <!-- Matching skills will be populated here -->
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 20%"></div>
                             </div>
                         </div>
                         
-                        <div class="skill-section">
-                            <h4 class="skill-section-title">
-                                <i class="fas fa-times-circle" style="color: #dc3545;"></i> Missing Skills
-                            </h4>
-                            <div class="skill-list" id="missing-skills">
-                                <!-- Missing skills will be populated here -->
+                        <div class="skill-item">
+                            <div class="skill-header">
+                                <span class="skill-name">Docker</span>
+                                <span class="skill-level medium">Medium</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 0%"></div>
                             </div>
                         </div>
                         
-                        <div class="skill-section">
-                            <h4 class="skill-section-title">
-                                <i class="fas fa-star" style="color: #ffc107;"></i> Nice-to-Have Skills
-                            </h4>
-                            <div class="skill-list" id="nice-to-have-skills">
-                                <!-- Nice-to-have skills will be populated here -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-actions">
-                        <button class="action-btn primary-btn view-full-job-btn">
-                            <i class="fas fa-external-link-alt"></i> View Full Job
-                        </button>
-                        <button class="action-btn secondary-btn start-learning-btn">
-                            <i class="fas fa-graduation-cap"></i> Start Learning
-                        </button>
+                        <a href="learning.html" class="start-learning-btn">
+                            <i class="fas fa-graduation-cap"></i>
+                            Start Learning →
+                        </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Placeholder for main content/charts -->
-            <section class="main-dashboard-area" aria-label="Next learning steps">
-                <h2>Your Next Steps</h2>
-                <div class="main-dashboard-card">
-                    <p>Placeholder for personalized learning roadmap or current assignment.</p>
-                </div>
-            </section>
         </main>
     </div>
 
-    <!-- Resume Upload Modal (First-time User Flow) -->
-    <section
-        id="resume-modal"
-        class="resume-modal is-hidden"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="resume-modal-title"
-    >
-        <div class="resume-modal-backdrop"></div>
-        <div class="resume-modal-dialog" role="document">
-            <button
-                type="button"
-                class="resume-modal-close"
-                id="resume-modal-close"
-                aria-label="Close resume upload dialog"
-            >
-                &times;
-            </button>
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-            <header class="resume-upload-header">
-                <h2 id="resume-modal-title">Upload Your Resume</h2>
-                <p>
-                    Uploading your resume helps SkillVista personalize your journey,
-                    recommend the right skills, and match you to real-world roles faster.
-                </p>
-            </header>
+    <script>
+        // Dashboard JavaScript
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar Toggle Functionality
+            const sidebar = document.getElementById('sidebar');
+            const toggleBtn = document.getElementById('toggle-btn');
+            const logo = document.getElementById('logo');
+            const hamburgerBtn = document.getElementById('hamburger-btn');
+            const overlay = document.getElementById('overlay');
 
-            <!-- Front-end only: no backend/API calls yet -->
-            <form id="resume-modal-form" class="resume-upload-form">
-                <div class="resume-upload-field">
-                    <label for="resume-modal-file">Resume file (PDF, DOC, DOCX)</label>
-                    <input
-                        type="file"
-                        id="resume-modal-file"
-                        name="resume"
-                        accept=".pdf,.doc,.docx"
-                        required
-                    />
-                </div>
+            // Desktop toggle
+            toggleBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                logo.classList.toggle('collapsed');
+                
+                // Rotate toggle icon
+                const icon = toggleBtn.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
+                }
+            });
 
-                <div class="resume-upload-actions">
-                    <button type="submit" class="btn btn-primary">
-                        Upload Resume
-                    </button>
-                    <button type="button" class="btn btn-secondary" id="resume-modal-skip">
-                        Skip for now
-                    </button>
-                </div>
-            </form>
-        </div>
-    </section>
+            // Mobile hamburger menu
+            hamburgerBtn.addEventListener('click', function() {
+                sidebar.classList.add('mobile-open');
+                overlay.classList.add('active');
+            });
 
-    <footer class="main-footer">
-        <div class="container">
-            <p>&copy; 2024 SkillVista. All rights reserved.</p>
-            <div class="footer-links">
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-            </div>
-        </div>
-    </footer>
+            overlay.addEventListener('click', function() {
+                sidebar.classList.remove('mobile-open');
+                overlay.classList.remove('active');
+            });
 
-    <!-- Chart.js Library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    
-    <script src="assets/js/job-roles.js"></script>
-    <script src="assets/js/job-role-autocomplete.js"></script>
-    <script src="assets/js/skill-analysis.js"></script>
-    <script src="assets/js/script.js"></script>
-    <script src="assets/js/manual-skills.js"></script>
-    <script src="assets/js/learning.js"></script>
-    <script src="assets/js/practice-arena.js"></script>
-    <script src="assets/js/performance-analytics.js"></script>
-    <script src="assets/js/job-vacancies.js"></script>
+            // Progress bar animation on page load
+            const progressBars = document.querySelectorAll('.progress-fill');
+            progressBars.forEach(bar => {
+                const targetWidth = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = targetWidth;
+                }, 500);
+            });
+
+            // Sign out functionality
+            const signOutBtn = document.getElementById('sign-out-btn');
+            signOutBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                // Clear localStorage
+                localStorage.clear();
+                // Redirect to login
+                window.location.href = 'login.html';
+            });
+
+            // Responsive handling
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebar.classList.remove('mobile-open');
+                    overlay.classList.remove('active');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
